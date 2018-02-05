@@ -1,5 +1,11 @@
 import java.util.ArrayList;
 
+/**
+ * 
+ * temporary
+ *
+ */
+
 public class Constraint {
 	
     public final static int FORCED_PARTIAL_ASSIGNMENT = 0;
@@ -36,6 +42,10 @@ public class Constraint {
 			break;
 		}
 	}
+    
+    public boolean isForced(int machine, char task) {
+    	return (Integer)forced.get(0) == machine && ((Character)forced.get(1)).equals(task);
+    }
     
     public void setForcedConstraint(int machine, char task) {
     	forced.add(machine);

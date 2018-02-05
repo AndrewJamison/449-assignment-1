@@ -6,25 +6,24 @@ public class Node {
 	private ArrayList<Node> children;
 	private int machine;
 	private char task;
-	private char[] history; //all the machine task assignments for penalty sum 
+	private char[] history = new char[8]; //all the machine task assignments for penalty sum 
 	private boolean open;
 	private boolean hasChildren;
 	
 	Node(Node parent, int machine, char task){
 		this.parent = parent;
-		this.children = new ArrayList<Node>();
 		this.machine = machine;
 		this.task = task;
-		this.history = new char[8];
 		this.open = true; //false means closed
 		this.hasChildren = false;
+		children = new ArrayList<>();
 	}
 	
 	public boolean getHasChildren() {
 		return hasChildren;
 	}
 	
-	public setHasChildren(boolean hasChildren) {
+	public void  setHasChildren(boolean hasChildren) {
 		this.hasChildren = hasChildren;
 	}
 	
@@ -32,7 +31,7 @@ public class Node {
 		return open;
 	}
 	
-	public setOpen(boolean open) {
+	public void setOpen(boolean open) {
 		this.open = open;
 	}
 
@@ -44,19 +43,19 @@ public class Node {
 		this.parent = parent;
 	}
 
-	public int getPenaltySum() {
-		return penaltySum;
+	public int getLowerBound() {
+		return lowerBound;
 	}
 
-	public void setPenaltySum(int penaltySum) {
-		this.penaltySum = penaltySum;
+	public void setLowerBount(int lowerBound) {
+		this.lowerBound = lowerBound;
 	}
 
-	public Node[] getChildren() {
+	public ArrayList<Node> getChildren() {
 		return children;
 	}
 
-	public void setChildren(Node[] children) {
+	public void setChildren(ArrayList<Node> children) {
 		this.children = children;
 	}
 
@@ -86,3 +85,4 @@ public class Node {
 	
 	
 }
+

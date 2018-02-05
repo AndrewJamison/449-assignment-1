@@ -110,7 +110,7 @@ public class Data {
 		}
 		
 		catch (IOException e) {
-			System.out.println(e);
+			System.out.println("Something broke");
 		}
 
 		

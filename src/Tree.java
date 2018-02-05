@@ -1,15 +1,15 @@
 import java.util.ArrayList;
 
 public class Tree {
-		Constraint constraint;
+//		Constraint constraint;
 		Node rootNode;
-		Node[] finalSol;
-		int currentLowerBound;
+		ArrayList<Node> finalSol;
+		static int currentLowerBound;
 		
 	public Tree() {
-		this.constraint = new Constraint();
+//		this.constraint = new Constraint();
 		this.rootNode = new Node(null, -1, ' ');
-		this.finalSol = new Node[8]; 
+		this.finalSol = new ArrayList<>(); 
 	}
 
 	public static void main(String[] args) {
@@ -18,10 +18,11 @@ public class Tree {
 		search();
 	}
 	
+	// no constraints yet
 	public int initSolution() {
 		Node tempNode = rootNode;
 		calcLowerBound(tempNode);
-		for (i=0;i<8;i++) {
+		for (int i=0;i<8;i++) {
 			createChildren(tempNode);
 			for (Node childNode : tempNode.getChildren()) {
 				calcLowerBound(childNode);
@@ -43,21 +44,45 @@ public class Tree {
 				openChildrenNodes.add(childNode);
 			}
 		}
+		Node tempNode;
+		Node minChild;
 		while (openChildrenNodes.size() != 0) {
 			Node tempNode = minLowerBound(openChildrenNodes);
+			// create children for node
 			if (!tempNode.hasChildren()) {
 				createChildren(tempNode);
 				for (Node childNode : tempNode.getChildren()) {
 					calcLowerBound(childNode);
 				}
-			}	
+			}
+			// when at the end of tree 
 			if (tempNode.getMachine() == 6) {
 				Node minChild = minLowerBound(tempNode.getChildren());
 				if (currentLowerBound > minChild.getLowerBound()) {
 					currentLowerBound = minChild.getLowerBound();
+					finalSol = minChild.getHistory();
 				}
-				tempNode.setOpen = false;
+				tempNode.setOpen(false);
+				openChildrenNodes.remove(openChildrenNodes.indexOf(tempNode));
+				for (Node childNode : tempNode.getChildren()) {
+					if (currentLowerBound < childNode.getLowerBound()) {
+						openChildrenNodes.remove(openChildrenNodes.indexOf(childNode));	
+					}
+				}
 			}
+			// when at middle of tree
+			else {
+				for (Node childNode : tempNode.getChildren()) {
+					if (currentLowerBound > childNode.getLowerBound()) {
+						openChildrenNodes.add(childNode);	
+					}
+					else {
+						childNode.setOpen(false);
+					}
+				}
+			}
+			
+			
 			
 			//Check if node has children, if not, generate them and calc LB
 			//if current node is node 6, then find best child, find LB for each child
@@ -98,8 +123,8 @@ public class Tree {
 		int min = Integer.MAX_VALUE;
 		int index = -1;
 		for (int i=0; i < children.size(); i++) {
-			if (children.get(i).lowerBound < min) {
-				min = children.get(i).lowerBound;
+			if (children.get(i).getLowerBound() < min) {
+				min = children.get(i).getLowerBound();
 				index = i;
 			}
 		}
@@ -109,31 +134,32 @@ public class Tree {
 	public void calcLowerBound(Node node) {
 
 		Node calcNode = node; //the node that we are calculating lower bound for
-		int[][] penalty = constraint.getPenalty(); //gets penalty 2D array from constraint class
-		char[] tasksTaken;
+		int[][] penalty = constraint.getMachinePenalties(); //gets penalty 2D array from constraint class
+		ArrayList<Character> tasksTaken = new ArrayList<>();
 		tasksTaken.add(calcNode.getTask());
 		char[] history = calcNode.getHistory(); //assuming calcNode machine/task in calcNode history
-		lowerbound = calcNode.getlowerBound();
+		int lowerbound = calcNode.getLowerBound();
 
 		//get the sum of the parent nodes machine/task penalty
+		char tempTask;
 		Node tempNode = node;
-		for (i = calcNode.getMachine(); i>1; i--) {
+		for (int i = calcNode.getMachine(); i>1; i--) {
 			tempNode = tempNode.getParent();
 			tempTask = tempNode.getTask();
 			tasksTaken.add(tempTask); // task set in parent nodes no longer available
-			lowerbound += penalty[tempNode.getMachine()][tempNode.getTask().convertInt()]; //task is char so need to convert to int to get penalty (convert method in Node for task)
+			lowerbound += penalty[tempNode.getMachine()][convertInt(tempNode.getTask())]; //task is char so need to convert to int to get penalty (convert method in Node for task)
 			history[i] = tempTask;
 		}
 
 		// get the sum of the rest of machine/task penalty (lowest penalty possible for each machine)
 		// note: need to figure out how to check for/implement the constraints (too near, forbidden, forced)
 		double tempPenalty = Double.POSITIVE_INFINITY;
-		for (i = calcNode.getMachine() + 1;i<=8; i++) {
-			for (j = 0;j<=8;i++) {
+		for (int i = calcNode.getMachine() + 1;i<=8; i++) {
+			for (int j = 0;j<=8;i++) {
 				if (i,j).forced(){
 					break;
 				}
-				else if j not in tasksTaken && (i,j).hardTooNear() && !(i,j).forbidden(){ //again tasksTaken has char while j is int
+				else if (!taskTaken.contains(j) && (i,j).hardTooNear() && !(i,j).forbidden()){ //again tasksTaken has char while j is int
 					if tempPenalty >= penalty[i][j] + (i,j).softTooNear(){
 						tempPenalty = penalty[i][j]
 					}
