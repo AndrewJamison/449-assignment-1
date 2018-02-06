@@ -138,7 +138,11 @@ public class Tree {
 	public void calcLowerBound(Node node) {
 		Node calcNode = node; //the node whose LB is being calculated
 		int[][] penalty = constraint.getMachinePenalties(); //uses 2D penalty array from the constraint class
+<<<<<<< HEAD
 		ArrayList<Character> history = calcNode.getHistory(); //list of the tasks assigned prior to this current node and including this current nodes task
+=======
+		ArrayList<Character> history = calcNode.getHistory(); //list of the tasks assigned prior to this current node
+>>>>>>> e72dc3424689f887ca291d2cc8706cdb9db13247
 		int lowerbound = calcNode.getLowerBound(); //initialize lowerbound to current nodes set lowerbound (zero or if there is a soft constraint it would take that penalty to start)
 		
 		//calculate the sum of the penalties for the tasks assigned in the given history ArrayList
