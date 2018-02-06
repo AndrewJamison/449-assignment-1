@@ -17,6 +17,8 @@ public class Data {
 		
 		try {
 			
+			
+			//Change eol to "\r\n" if you're using windows, and "\n" if you're using MacOs/Unix
 			String eol = "\n";
 			
 			Scanner sc = new Scanner(new FileInputStream("data.txt"));
