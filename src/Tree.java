@@ -1,5 +1,7 @@
 import java.util.ArrayList;
 
+import com.sun.corba.se.impl.orbutil.graph.Node;
+
 public class Tree {
 //		Constraint constraint;
 		Node rootNode;
@@ -18,19 +20,46 @@ public class Tree {
 		search();
 	}
 	
-	// no constraints yet
+	/**
+	 * This class searches for the possible viable solution by finding 
+	 * the valid child node with minimum lower bound. 
+	 * @author Ga Hyung Kim
+	 * 
+	 * @return tempNode.getLowerBound() Current best lower bound
+	 */
 	public int initSolution() {
+		
+		// Initial node = root node
 		Node tempNode = rootNode;
 		calcLowerBound(tempNode);
-		for (int i=0;i<8;i++) {
+		
+		// Branching down to the leaf node
+		while (true) {
+			
+			// Create children of tempNode
 			createChildren(tempNode);
-			for (Node childNode : tempNode.getChildren()) {
-				calcLowerBound(childNode);
+			
+			// If there are no children for the tempNode, close the current
+			// node and move back to the parent node and find another child
+			// Else calcuate the lower bounds of children node and set
+			// next node as child node with minimum lower bound
+			if (tempNode.getChildren().size() == 0) {
+				tempNode.setOpen(false);
+				tempNode = tempNode.getParent();
+			} else {
+				for (Node childNode : tempNode.getChildrent()) {
+					calcLowerBound(childNode);
+				}
+				tempNode = minLowerBound(tempNode.getChildren());
 			}
-			tempNode = minLowerBound(tempNode.getChildren());
+			
+			// When it reaches at the end node, exit loop
+			if (tempNode.getMachine() == 7) break;
 		}
+
 		tempNode.getParent().setOpen(false);
 		finalSol = tempNode.getHistory();
+		
 		return tempNode.getLowerBound();
 	}
 	
