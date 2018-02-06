@@ -28,6 +28,7 @@ public class Data {
 				for (int i = 1; i < arr.length; i ++) {
 					if (!(arr[i].trim() == "" || arr[i].trim() == "\n")) {
 						System.out.println(arr[i]);
+						
 					}
 				}
 				
