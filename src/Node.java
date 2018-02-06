@@ -76,7 +76,7 @@ public class Node {
 	}
 
 	public ArrayList<Character> getHistory() {
-		return history;
+		return new ArrayList<>(history);
 	}
 
 	public void setHistory(ArrayList<Character> history) {

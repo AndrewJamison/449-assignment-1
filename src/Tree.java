@@ -131,13 +131,17 @@ public class Tree {
 		return children.get(index);
  	}
 	
+ 	/**
+ 	 * This method calculates the total lower bound for every node up to and including the current node and sets the passes in nodes lower bound to the sum
+ 	 * @param node the node to calculate the lower bound for 
+ 	 */
 	public void calcLowerBound(Node node) {
 		Node calcNode = node; //the node whose LB is being calculated
 		int[][] penalty = constraint.getMachinePenalties(); //uses 2D penalty array from the constraint class
-		ArrayList<Character> history = calcNode.getHistory(); //list of the tasks assigned prior to this current node
-		int lowerbound = calcNode.getLowerBound() + penalty[calcNode.getMachine()][convertInt(calcNode.getTask())];
+		ArrayList<Character> history = calcNode.getHistory(); //list of the tasks assigned prior to this current node and including this current nodes task
+		int lowerbound = calcNode.getLowerBound(); //initialize lowerbound to current nodes set lowerbound (zero or if there is a soft constraint it would take that penalty to start)
 		
-		//calculate the sum of the penalties for the previous tasks assigned in the given history ArrayList
+		//calculate the sum of the penalties for the tasks assigned in the given history ArrayList
 		char tempTask;
 		int tempMachine;
 		for (int i = 0; i < history.size(); i++) {
