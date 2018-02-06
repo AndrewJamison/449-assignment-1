@@ -6,7 +6,7 @@ public class Node {
 	private ArrayList<Node> children;
 	private int machine;
 	private char task;
-	private char[] history = new char[8]; //all the machine task assignments for penalty sum 
+	private ArrayList<Character> history = new ArrayList<Character>(); //all the machine task assignments for penalty sum 
 	private boolean open;
 	private boolean hasChildren;
 	
@@ -16,7 +16,7 @@ public class Node {
 		this.task = task;
 		this.open = true; //false means closed
 		this.hasChildren = false;
-		children = new ArrayList<>();
+		children = new ArrayList<Node>();
 	}
 	
 	public boolean getHasChildren() {
@@ -47,7 +47,7 @@ public class Node {
 		return lowerBound;
 	}
 
-	public void setLowerBount(int lowerBound) {
+	public void setLowerBound(int lowerBound) {
 		this.lowerBound = lowerBound;
 	}
 
@@ -75,11 +75,11 @@ public class Node {
 		this.task = task;
 	}
 
-	public char[] getHistory() {
+	public ArrayList<Character> getHistory() {
 		return history;
 	}
 
-	public void setHistory(char[] history) {
+	public void setHistory(ArrayList<Character> history) {
 		this.history = history;
 	}
 	

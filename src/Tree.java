@@ -1,13 +1,13 @@
 import java.util.ArrayList;
 
 public class Tree {
-//		Constraint constraint;
+		Constraint constraint;
 		Node rootNode;
 		ArrayList<Node> finalSol;
 		static int currentLowerBound;
 		
 	public Tree() {
-//		this.constraint = new Constraint();
+		this.constraint = new Constraint();
 		this.rootNode = new Node(null, -1, ' ');
 		this.finalSol = new ArrayList<>(); 
 	}
@@ -47,9 +47,9 @@ public class Tree {
 		Node tempNode;
 		Node minChild;
 		while (openChildrenNodes.size() != 0) {
-			Node tempNode = minLowerBound(openChildrenNodes);
+			tempNode = minLowerBound(openChildrenNodes);
 			// create children for node
-			if (!tempNode.hasChildren()) {
+			if (!tempNode.getHasChildren()) {
 				createChildren(tempNode);
 				for (Node childNode : tempNode.getChildren()) {
 					calcLowerBound(childNode);
@@ -57,7 +57,7 @@ public class Tree {
 			}
 			// when at the end of tree 
 			if (tempNode.getMachine() == 6) {
-				Node minChild = minLowerBound(tempNode.getChildren());
+				minChild = minLowerBound(tempNode.getChildren());
 				if (currentLowerBound > minChild.getLowerBound()) {
 					currentLowerBound = minChild.getLowerBound();
 					finalSol = minChild.getHistory();
@@ -132,48 +132,23 @@ public class Tree {
  	}
 	
 	public void calcLowerBound(Node node) {
-
-		Node calcNode = node; //the node that we are calculating lower bound for
-		int[][] penalty = constraint.getMachinePenalties(); //gets penalty 2D array from constraint class
-		ArrayList<Character> tasksTaken = new ArrayList<>();
-		tasksTaken.add(calcNode.getTask());
-		char[] history = calcNode.getHistory(); //assuming calcNode machine/task in calcNode history
-		int lowerbound = calcNode.getLowerBound();
-
-		//get the sum of the parent nodes machine/task penalty
+		Node calcNode = node; //the node whose LB is being calculated
+		int[][] penalty = constraint.getMachinePenalties(); //uses 2D penalty array from the constraint class
+		ArrayList<Character> history = calcNode.getHistory(); //list of the tasks assigned prior to this current node
+		int lowerbound = calcNode.getLowerBound() + penalty[calcNode.getMachine()][convertInt(calcNode.getTask())];
+		
+		//calculate the sum of the penalties for the previous tasks assigned in the given history ArrayList
 		char tempTask;
-		Node tempNode = node;
-		for (int i = calcNode.getMachine(); i>1; i--) {
-			tempNode = tempNode.getParent();
-			tempTask = tempNode.getTask();
-			tasksTaken.add(tempTask); // task set in parent nodes no longer available
-			lowerbound += penalty[tempNode.getMachine()][convertInt(tempNode.getTask())]; //task is char so need to convert to int to get penalty (convert method in Node for task)
-			history[i] = tempTask;
+		int tempMachine;
+		for (int i = 0; i < history.size(); i++) {
+			tempMachine = i;
+			tempTask = history.get(i);
+			lowerbound += penalty[tempMachine][convertInt(tempTask)];
 		}
-
-		// get the sum of the rest of machine/task penalty (lowest penalty possible for each machine)
-		// note: need to figure out how to check for/implement the constraints (too near, forbidden, forced)
-		double tempPenalty = Double.POSITIVE_INFINITY;
-		for (int i = calcNode.getMachine() + 1;i<=8; i++) {
-			for (int j = 0;j<=8;i++) {
-				if (i,j).forced(){
-					break;
-				}
-				else if (!taskTaken.contains(j) && (i,j).hardTooNear() && !(i,j).forbidden()){ //again tasksTaken has char while j is int
-					if tempPenalty >= penalty[i][j] + (i,j).softTooNear(){
-						tempPenalty = penalty[i][j]
-					}
-				}
-			lowerbound += penalty[i][j];
-			history[i] = j.convertChar();
-			}
-
+		
+		//set the lowerbound of the node
 		calcNode.setLowerBound(lowerbound);
-		calcNode.setHistory(history);
-		}
-
 	}
-
 	
 	/**
 	 * createChildren method creates an array of children nodes which come from a parent node
