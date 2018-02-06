@@ -4,6 +4,12 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+/**
+ * 
+ * Tree test for input data.txt
+ *
+ */
+
 class TreeTest1 {
 
 	private Tree tree;
