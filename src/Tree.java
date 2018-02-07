@@ -159,6 +159,30 @@ public class Tree {
 		}
 		return children.get(index);
  	}
+ 	
+ 	public int adjustLowerBound(Node node) {
+ 		int lowerBoundToAdd = 0;
+ 		int machineNum = node.getMachine();
+ 		
+ 		for (int i = machineNum + 1; i < Constraint.penalties.length; i++) {
+ 			lowerBoundToAdd = lowerBoundToAdd + getMinValue(i);
+ 		}
+ 		return lowerBoundToAdd;
+ 	}
+ 	
+ 	// Returns the minimum integer value in given row.
+ 	public int getMinValue(int machineNum) {
+ 		int min = Integer.MAX_VALUE;
+ 		int row = machineNum;
+ 		
+ 		for (int i = 0; i < Constraint.penalties.length; i++) {
+ 			if ((min > Constraint.penalties[row][i]) && (Constraint.penalties[row][i] > -1)) {
+ 				min = Constraint.penalties[row][i];
+ 			}
+ 		}
+ 		
+ 		return min;
+ 	}
 	
 	public void calcLowerBound(Node node) {
 
