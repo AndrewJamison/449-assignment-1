@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * 
@@ -16,11 +17,12 @@ public class Constraint {
     
     private int type;
     
-    private ArrayList<Object> forced;
-    private ArrayList<Object> forbidden;
-    private ArrayList<Character> tooNearTask;
+    private ArrayList<Object> forced; // {Integer, Character, Integer, Character ...}
+    private ArrayList<Object> forbidden; 
+    private ArrayList<Character> tooNearTasks;
     private int[][] machinePenalties;
-    private ArrayList<Object> tooNearPenalties;
+    private ArrayList<Object> tooNearPenalties; // {Character, Character, Integer, Character, Character, Integer ...}
+  
     
     public Constraint(int constraintType) {
 		this.type = constraintType;
@@ -32,7 +34,7 @@ public class Constraint {
 			this.forbidden = new ArrayList<>();
 			break;
 		case TOO_NEAR_TASKS:
-			this.tooNearTask = new ArrayList<>();
+			this.tooNearTasks = new ArrayList<>();
 			break;
 		case MACHINE_PENALTIES:
 			this.machinePenalties = new int[8][8];
@@ -44,43 +46,40 @@ public class Constraint {
 	}
     
     public boolean isForced(int machine, char task) {
-    	return (Integer)forced.get(0) == machine && ((Character)forced.get(1)).equals(task);
+    	Integer intObj = new Integer(machine);
+    	Character charObj = new Character(task);
+    	for (int i=0; i<forced.size(); i++) {
+    		if (forced.get(i) instanceof Integer) {
+    			if (intObj.equals((Integer)forced.get(i)) && charObj.equals((Character)forced.get(i+1))) {
+    				return true;
+    			}
+    		}
+    	}
+    	return false;
     }
     
-    public void setForcedConstraint(int machine, char task) {
-    	forced.add(machine);
-    	forced.add(task);
+    public void setForcedConstraints(ArrayList<Object> forcedConstraints) {
+    	forced = forcedConstraints;
     }
     
-    public ArrayList<Object> getForcedConstraint() {
-    	ArrayList<Object> forcedCopy = new ArrayList<>();
-    	forcedCopy.add(forced.get(0));
-    	forcedCopy.add(forced.get(1));
-    	return forcedCopy;
+    public ArrayList<Object> getForcedConstraints() {
+    	return new ArrayList<>(forced);
     }
     
-    public void setForbiddenConstraint(int machine, char task) {
-    	forbidden.add(machine);
-    	forbidden.add(task);
+    public void setForbiddenConstraints(ArrayList<Object> forbiddenConstraints) {
+    	forbidden = forbiddenConstraints;
     }
     
-    public ArrayList<Object> getForbiddenConstraint() {
-    	ArrayList<Object> forbiddenCopy = new ArrayList<>();
-    	forbiddenCopy.add(forbidden.get(0));
-    	forbiddenCopy.add(forbidden.get(1));
-    	return forbiddenCopy;
+    public ArrayList<Object> getForbiddenConstraints() {
+    	return  new ArrayList<>(forbidden);
     }
     
-    public void setTooNearTask(char task1, char task2) {
-    	tooNearTask.add(task1);
-    	tooNearTask.add(task2);
+    public void setTooNearTasks(ArrayList<Character> tooNearTasks) {
+    	this.tooNearTasks = tooNearTasks;
     }
     
-    public ArrayList<Character> getTooNearTask() {
-    	ArrayList<Character> tooNearTaskCopy = new ArrayList<>();
-    	tooNearTaskCopy.add(tooNearTask.get(0));
-    	tooNearTaskCopy.add(tooNearTask.get(1));
-    	return tooNearTaskCopy;
+    public ArrayList<Character> getTooNearTasks() {
+    	return new ArrayList<>(tooNearTasks);
     }
 
     public void setMachinePenalties(int[][] ar) {
@@ -91,18 +90,12 @@ public class Constraint {
     	return machinePenalties;
     }
     
-    public void setTooNearPenalties(char task1, char task2, int penalty) {
-    	tooNearPenalties.add(task1);
-    	tooNearPenalties.add(task2);
-    	tooNearPenalties.add(penalty);
+    public void setTooNearPenalties(ArrayList<Object> tooNearPenalties) {
+    	this.tooNearPenalties = tooNearPenalties;
     }
     
     public ArrayList<Object> getTooNearPenalties() {
-    	ArrayList<Object> tooNearPenaltiesCopy = new ArrayList<>();
-    	tooNearPenaltiesCopy.add(tooNearPenalties.get(0));
-    	tooNearPenaltiesCopy.add(tooNearPenalties.get(1));
-    	tooNearPenaltiesCopy.add(tooNearPenalties.get(2));
-    	return tooNearPenaltiesCopy;
+    	return new ArrayList<>(tooNearPenalties);
     }
     
 	public int getType() {
