@@ -1,7 +1,5 @@
 import java.util.ArrayList;
 
-import com.sun.corba.se.impl.orbutil.graph.Node;
-
 public class Tree {
 		Constraint constraint;
 		Node rootNode;

@@ -21,12 +21,11 @@ class TreeTest1 {
 
 	@AfterEach
 	void tearDown() throws Exception {
+		tree = null;
 	}
 
 	@Test
 	void testInitSolution() {
-		// 26 with constraints
-		// 19 with no constraints
 		assertEquals(19, tree.initSolution());
 	}
 	
