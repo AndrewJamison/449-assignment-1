@@ -1,9 +1,9 @@
 import java.util.ArrayList;
 
 public class Tree {
-		Constraint constraint;
-		Node rootNode;
-		ArrayList<Node> finalSol;
+		static Constraint constraint;
+		static Node rootNode;
+		static ArrayList<Character> finalSol;
 		static int currentLowerBound;
 		
 	public Tree() {
@@ -39,13 +39,13 @@ public class Tree {
 			
 			// If there are no children for the tempNode, close the current
 			// node and move back to the parent node and find another child
-			// Else calcuate the lower bounds of children node and set
+			// Else calculate the lower bounds of children node and set
 			// next node as child node with minimum lower bound
 			if (tempNode.getChildren().size() == 0) {
 				tempNode.setOpen(false);
 				tempNode = tempNode.getParent();
 			} else {
-				for (Node childNode : tempNode.getChildrent()) {
+				for (Node childNode : tempNode.getChildren()) {
 					calcLowerBound(childNode);
 				}
 				tempNode = minLowerBound(tempNode.getChildren());
@@ -64,7 +64,7 @@ public class Tree {
 	//check if open
 	// 	if closed go to parent
 	// create children --> check if has children already
-	public void search() {
+	public static void search() {
 		ArrayList<Node> openChildrenNodes = new ArrayList<Node>();
 		for (Node childNode : rootNode.getChildren()) {
 			if ((childNode.getLowerBound() < currentLowerBound) && childNode.getOpen()) {
@@ -145,7 +145,7 @@ public class Tree {
 	 * @param children An array of children nodes with same parent
 	 * @return Node[index] Element of an array of children nodes with minimum lower bound
 	 */
- 	public Node minLowerBound(ArrayList<Node> children) {
+ 	public static Node minLowerBound(ArrayList<Node> children) {
 		
 		int min = Integer.MAX_VALUE;
 		int index = -1;
@@ -162,11 +162,10 @@ public class Tree {
  	 * This method calculates the total lower bound for every node up to and including the current node and sets the passes in nodes lower bound to the sum
  	 * @param node the node to calculate the lower bound for 
  	 */
-	public void calcLowerBound(Node node) {
+	public static void calcLowerBound(Node node) {
 		Node calcNode = node; //the node whose LB is being calculated
-		int[][] penalty = constraint.getMachinePenalties(); //uses 2D penalty array from the constraint class
+		int[][] penalty = constraint.getPenalties(); //uses 2D penalty array from the constraint class
 		ArrayList<Character> history = calcNode.getHistory(); //list of the tasks assigned prior to this current node and including this current nodes task
-		ArrayList<Character> history = calcNode.getHistory(); //list of the tasks assigned prior to this current node
 		int lowerbound = calcNode.getLowerBound(); //initialize lowerbound to current nodes set lowerbound (zero or if there is a soft constraint it would take that penalty to start)
 		
 		//calculate the sum of the penalties for the tasks assigned in the given history ArrayList
@@ -187,20 +186,20 @@ public class Tree {
 	 * @author Esther Chung
 	 * @param parent the parent Node from which the children come
 	 */
-	public void createChildren(Node parent) {
+	public static void createChildren(Node parent) {
 		// create an array of nodes
-		Node[] childrenArray;
+		ArrayList<Node> childrenArray = new ArrayList<>();
 		
 		// variables needed
 		int parentMachine = parent.getMachine(); // get the parent's machine #
-		char[] availableTasks = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H']; // the available tasks
-		char[] takenTasks = parent.getHistory();  // get the history of the tasks that have been taken so far
+		char[] availableTasks = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'}; // the available tasks
+		ArrayList<Character> takenTasks = parent.getHistory();  // get the history of the tasks that have been taken so far
 		
 		// Take out the tasks that are already taken from the availableTasks array
 		for (int i = 0; i < parentMachine; i++) {
 			for (int j = 0; j < availableTasks.length; j++) {
-				if (takenTasks[i] == availableTasks[j]) {
-					availableTasks[j] = '';
+				if (takenTasks.get(i) == availableTasks[j]) {
+					availableTasks[j] = Character.MIN_VALUE ;
 					break; 
 				}
 			}
@@ -208,7 +207,7 @@ public class Tree {
 		
 		// initialize the children nodes; create nodes for only the available tasks
 		for (int i = 0; i < availableTasks.length; i++) {
-			if (availableTasks[i] != '') {
+			if (availableTasks[i] != Character.MIN_VALUE ) {
 				childrenArray.add(new Node(parent, parentMachine + 1, availableTasks[i]));
 			}
 		}
@@ -218,11 +217,11 @@ public class Tree {
 		parent.setHasChildren(true);
 	}
 
-	public int convertInt(char task){
+	public static int convertInt(char task){
 		return task - 65;
 	}
 
 	public char convertChar(int task){
-		return char(task+65);
+		return (char) (task+65);
 	}
 }
