@@ -21,7 +21,7 @@ public class Tree {
 	}
 	
 	/**
-	 * This class searches for the possible viable solution by finding 
+	 * This method searches for the possible viable solution by finding 
 	 * the valid child node with minimum lower bound. 
 	 * @author Ga Hyung Kim
 	 * 
