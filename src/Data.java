@@ -1,6 +1,7 @@
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Scanner;
+import java.util.regex.Pattern;
 
 
 public class Data {
@@ -14,109 +15,63 @@ public class Data {
 	//This is the disgusting ass constructor that doesn't even work properly
 	
 	public Data() {
+		Scanner sc = null;
 		
 		try {
-			
-			
-			//Change eol to "\r\n" if you're using windows, and "\n" if you're using MacOs/Unix
-			String eol = "\n";
-			
-			Scanner sc = new Scanner(new FileInputStream("data.txt"));
-				sc.useDelimiter("forced partial assignment:");
-				String arr[] = sc.next().split(eol);
-				
-//				System.out.println(arr.length);
-				
-				for (int i = 1; i < arr.length; i ++) {
-					if (!(arr[i].trim() == "" || arr[i].trim() == eol)) {
-						System.out.println(arr[i]);
-						
-					}
-				}
-				
-				
-				sc.useDelimiter("forbidden machine:");
-				String arr1[] = sc.next().split(eol);
-				
-//				System.out.println(arr1.length);
-				
-				for (int i = 1; i < arr1.length; i ++) {
-					if (!(arr1[i].trim() == "" || arr1[i].trim() == eol)) {
-						System.out.println(arr1[i]);
-					}
-
-				}
-				System.out.println("");
-				
-				sc.useDelimiter("too-near tasks:");
-				String arr2[] = sc.next().split(eol);
-				
-//				System.out.println(arr1.length);
-				
-				for (int i = 1; i < arr2.length; i ++) {
-					if (!(arr2[i].trim() == "" || arr2[i].trim() == eol)) {
-						System.out.println(arr2[i]);
-					}
-
-				}
-				
-				System.out.println("");
-				
-				sc.useDelimiter("machine penalties:");
-				String arr3[] = sc.next().split(eol);
-				
-//				System.out.println(arr1.length);
-				
-				for (int i = 1; i < arr3.length; i ++) {
-					if (!(arr3[i].trim() == "" || arr3[i].trim() == eol)) {
-						System.out.println(arr3[i]);
-					}
-
-				}
-				
-				System.out.println("");
-				
-				sc.useDelimiter("too-near penalties:");
-				String arr4[] = sc.next().split(eol);
-				
-//				System.out.println(arr1.length);
-				String[][] macPenArrStr = new String[8][8];
-				
-				
-				//System.out.println(arr4.length);
-				
-				for (int i = 1; i < arr4.length; i ++) {
-					if (!(arr4[i].trim() == "" || arr4[i].trim() == eol)) {
-						System.out.println(arr4[i]);
-						macPenArrStr[i-1] = arr4[i].split(" "); 
-						for (int j = 0; j < 8; j ++) {
-							macPenArrInt[i-1][j] = Integer.parseInt(macPenArrStr[i-1][j]);
-						}
-						
-					}
-
-				}
-
-				System.out.println("");
+			String eol = System.getProperty("line.separator");
+			sc = new Scanner(new FileInputStream("data.txt"));
+			sc.useDelimiter(eol);
+			Pattern data = null;
+			Pattern header = Pattern.compile("Name:");
+			Pattern whitespace = Pattern.compile("");
+			if (sc.hasNext(header)) {
 				sc.nextLine();
-				String temp;
-				while (sc.hasNextLine()) {
-						temp = sc.nextLine();
-						if (!(temp.trim().equalsIgnoreCase("") || temp.trim().equalsIgnoreCase(eol) )) {
-							System.out.println(temp);
+				if (sc.hasNextLine()) {
+					name = sc.nextLine();	
+					sc.useDelimiter("forced partial assignment:");
+					if (sc.next().trim().length() == 0) {
+						header = Pattern.compile("forced partial assignment:");
+						if (sc.nextLine().equalsIgnoreCase("forced partial assignment:")) {
+							
+							sc.useDelimiter("forbidden machine:");
+							String temp[] = sc.next().split(eol);
+							for (int i = 0; i < temp.length;i ++) {
+								
+							}
+							
+							
+							
+							
 						}
-						
+						else {
+							sc.close();
+							throw new IOException("Missing \"forced partial assignment\" header.");
+						}
 					}
-
-
+					else {
+						sc.close();
+						throw new IOException("Extra characters in data file.");
+					}
+				}
+				else {
+					sc.close();
+					throw new IOException("Missing name.");
+				}
+			}
+			else {
+				sc.close();
+				throw new IOException("Missing \"name\" header.");
+			}
+		
 			
-		}
 		
+		}
 		catch (IOException e) {
-			System.out.println("Something broke");
+			sc.close();
 		}
-
 		
+		sc.close();
+		System.out.println(name);
 	}
 	
 	
