@@ -35,7 +35,8 @@ public class Data {
 							
 							sc.useDelimiter("forbidden machine:");
 							String temp[] = sc.next().split(eol);
-							for (int i = 0; i < temp.length;i ++) {
+							int i = 0;
+							while (i < temp.length) {
 								
 							}
 							
