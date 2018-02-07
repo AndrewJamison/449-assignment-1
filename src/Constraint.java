@@ -52,12 +52,12 @@ public class Constraint {
     		
     		// Set elements in (machine, ) to null
     		for (int i = 0; i < penalties[machine].length; i++) {
-    			penalties[machine][i] = null;
+    			penalties[machine][i] = -1;
     		}
     		
     		// Set elements in ( , task) to null
     		for (int i = 0; i < penalties.length; i++) {
-    			penalties[i][task] = null;
+    			penalties[i][task] = -1;
     		}
     	}	
     }
@@ -74,7 +74,7 @@ public class Constraint {
     		int machine = Character.getNumericValue(c[0]) - 1;
     		int task = c[1] - 65;
     		
-    		penalties[machine][task] = null;
+    		penalties[machine][task] = -1;
     	}
     }
     
