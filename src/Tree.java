@@ -1,7 +1,7 @@
 import java.util.ArrayList;
 
 public class Tree {
-//		Constraint constraint;
+		Constraint constraint;
 		Node rootNode;
 		ArrayList<Node> finalSol;
 		static int currentLowerBound;
@@ -180,20 +180,33 @@ public class Tree {
 	 * @author Esther Chung
 	 * @param parent the parent Node from which the children come
 	 */
+	// note: should we calc lowerBound of children in this method or outside (right now doing it outside)
 	public void createChildren(Node parent) {
+		/*
+		 * if not null and not too hard constraint {
+		 *  	create child 
+		 *  	if soft too near constraint
+		 *  		add soft too near penalty to child lowerbound
+		 *  	calcLowerBound 
+		 * } 
+		 * 
+		 */
+		
+		// getting penalty array from constraint class
+		int[][] penalty = constraint.getPenalty();
 		// create an array of nodes
-		Node[] childrenArray;
+		ArrayList<Node> childrenArray = new ArrayList<Node>();
 		
 		// variables needed
 		int parentMachine = parent.getMachine(); // get the parent's machine #
 		char[] availableTasks = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H']; // the available tasks
-		char[] takenTasks = parent.getHistory();  // get the history of the tasks that have been taken so far
+		ArrayList<Character> takenTasks = parent.getHistory();  // get the history of the tasks that have been taken so far
 		
 		// Take out the tasks that are already taken from the availableTasks array
 		for (int i = 0; i < parentMachine; i++) {
 			for (int j = 0; j < availableTasks.length; j++) {
-				if (takenTasks[i] == availableTasks[j]) {
-					availableTasks[j] = '';
+				if (takenTasks.get(i) == availableTasks[j]) {
+					availableTasks[j] = ' ';
 					break; 
 				}
 			}
@@ -201,8 +214,17 @@ public class Tree {
 		
 		// initialize the children nodes; create nodes for only the available tasks
 		for (int i = 0; i < availableTasks.length; i++) {
-			if (availableTasks[i] != '') {
-				childrenArray.add(new Node(parent, parentMachine + 1, availableTasks[i]));
+			if (availableTasks[i] != ' ') { 
+				if (penalty[parentMachine + 1][convertInt(availableTasks[i])] != -1 //checking if penalty spot is null
+				&& !constraint.tooNearH(parent.getTask(), availableTasks[i])) { 		//checking if there is too near hard constraint
+				
+					Node childNode = new Node(parent, parentMachine + 1, availableTasks[i]);
+					int tnsPenalty = constraint.tooNearS(parent.getTask(), availableTasks[i]); //if there is too near soft constraint return penalty if not return 0
+					childNode.setLowerBound(tnsPenalty);
+					int childHistory = parent.getHistory().add(availableTasks[i]);
+					childNode.setHistory(childHistory);
+					childrenArray.add(childNode);
+				}
 			}
 		}
 		

@@ -112,5 +112,17 @@ public class Constraint {
 	public void setType(int type) {
 		this.type = type;
 	}
+	
+	// note: for the constraints, need to figure out eg. too near pair (A,B) 8 --> A and 1 --> B
+	//(maybe in init solution and search?)
+	// tooNearTask neads to be 2d array with true if there is too near else false
+	public boolean tooNearH(char pTask, char cTask){
+		return tooNearTask[pTask][cTask];
+	}
+	
+	// tooNearPenalties need to be 2d array with penalty value if exist, else 0
+	public int tooNearS(char pTask, char cTask) {
+		return tooNearPenalties[pTask][cTask];
+	}
     
 }

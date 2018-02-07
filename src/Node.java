@@ -17,6 +17,7 @@ public class Node {
 		this.open = true; //false means closed
 		this.hasChildren = false;
 		children = new ArrayList<>();
+		this.lowerBound = 0;
 	}
 	
 	public boolean getHasChildren() {
@@ -47,7 +48,7 @@ public class Node {
 		return lowerBound;
 	}
 
-	public void setLowerBount(int lowerBound) {
+	public void setLowerBound(int lowerBound) {
 		this.lowerBound = lowerBound;
 	}
 
