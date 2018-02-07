@@ -5,7 +5,7 @@ Bobby Mcferrin
 
 forced partial assignment:
 (1, C)
-(3, F)
+(3, D)
 (7, B)
 
 forbidden machine:

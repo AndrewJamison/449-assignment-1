@@ -37,7 +37,33 @@ public class Data {
 							String temp[] = sc.next().split(eol);
 							int i = 0;
 							while (i < temp.length) {
+								if (temp[i].trim().length() == 0) {
+									i++;
+									continue;
+								}
+								else if (temp[i].length() != 6) {
+									sc.close();
+									throw new IOException("Invalid forced partial assignment data.");
+								}
+								else if (temp[i].charAt(0) == '(' && temp[i].charAt(5) == ')' && temp[i].charAt(2) == ',' && temp[i].charAt(3) == ' ') {
+									int machine = Character.getNumericValue((temp[i].charAt(1)));
+									int task = temp[i].charAt(4) - 65;
+									//System.out.println(machine);
+									//System.out.println(task);
+									if (machine < 8 && machine > 0 && task < 8 && task > 0 && forcedPartialAssignment[task] == 0) {
+										forcedPartialAssignment[task] = machine;
+									}
+									else {
+										sc.close();
+										throw new IOException("Invalid Forced Partial Assignment Data.");
+									}
+								}
 								
+								else {
+									sc.close();
+									throw new IOException("Invalid characters in forced partial assignment data.");
+								}
+								i++;
 							}
 							
 							
@@ -63,16 +89,20 @@ public class Data {
 				sc.close();
 				throw new IOException("Missing \"name\" header.");
 			}
-		
+			System.out.println(name);
+			for (int i = 0; i < 8; i ++) {
+				System.out.println(forcedPartialAssignment[i]);
+			}
 			
 		
 		}
 		catch (IOException e) {
+			e.printStackTrace();
 			sc.close();
 		}
 		
 		sc.close();
-		System.out.println(name);
+		
 	}
 	
 	
