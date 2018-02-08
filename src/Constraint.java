@@ -1,30 +1,29 @@
 import java.util.ArrayList;
 
-/**
- * 
- * temporary
- *
- */
-
 public class Constraint {
 	
-    private ArrayList<char[]> forced; 
+	private ArrayList<char[]> forced;
     private ArrayList<char[]> forbidden; 
-    private ArrayList<char[]> tooNearTasks;
-    private ArrayList<char[]> tooNearPenalties; 
+
     private int[][] penalties;
-    
+    private int[][] tooNearPenalties;
+    private boolean[][] tooNearTask;
+        
     private Data data;
     
     public Constraint() {
     	
     	// Get data from the class Data
     	this.data = new Data();
+    	
     	this.forced = data.getForced();
     	this.forbidden = data.getForbidden();
-    	this.tooNearTasks = data.getTooNearTasks();
+    	this.tooNearTask = data.getTooNearTask();
     	this.tooNearPenalties = data.getTooNearPenalties();
     	this.penalties = data.getPenalties();
+    	
+    	tooNearPenalties = new int[8][8];
+    	tooNearTask = new boolean[8][8];
     	
     	setPenaltySet();
 		
@@ -77,7 +76,6 @@ public class Constraint {
     		penalties[machine][task] = -1;
     	}
     }
-    
     
     // note: for the constraints, need to figure out eg. too near pair (A,B) 8 --> A and 1 --> B
  	//(maybe in init solution and search?)

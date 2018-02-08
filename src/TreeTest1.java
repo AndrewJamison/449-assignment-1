@@ -4,6 +4,12 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+/**
+ * 
+ * Tree test for input data.txt
+ *
+ */
+
 class TreeTest1 {
 
 	private Tree tree;
@@ -15,12 +21,11 @@ class TreeTest1 {
 
 	@AfterEach
 	void tearDown() throws Exception {
+		tree = null;
 	}
 
 	@Test
 	void testInitSolution() {
-		// 26 with constraints
-		// 19 with no constraints
 		assertEquals(19, tree.initSolution());
 	}
 	
