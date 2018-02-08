@@ -49,6 +49,9 @@ public class Constraint {
     		int machine = Character.getNumericValue(c[0]) - 1;
     		int task = c[1] - 65;
     		
+    		// Penalty of the forced constraint
+    		int penalty = penalties[machine][task];
+    		
     		// Set elements in (machine, ) to null
     		for (int i = 0; i < penalties[machine].length; i++) {
     			penalties[machine][i] = -1;
@@ -58,6 +61,9 @@ public class Constraint {
     		for (int i = 0; i < penalties.length; i++) {
     			penalties[i][task] = -1;
     		}
+    		
+    		// Set the penalty back 
+    		penalties[machine][task] = penalty;
     	}	
     }
     
