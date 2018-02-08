@@ -1,128 +1,331 @@
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Scanner;
+import java.util.regex.Pattern;
+import java.lang.ArrayIndexOutOfBoundsException;
+import java.lang.NumberFormatException;
+import java.util.ArrayList;
 
 
 public class Data {
 	
 	private String fileName;
 	public String name;
-	public int[][] macPenArrInt = new int[8][8];
-	public int[] forcedPartialAssignment = new int[8];
+	public int[][] machinePenalties = new int[8][8];
+	public int[][] forcedPartialAssignment = new int[2][8];
+	public int[][] tooNearTasks = new int[8][8];
+	public int[][] tooNearTasksSoft = new int[8][8];
+	ArrayList<char[]> forbidden = new ArrayList<char[]>();
 	
+	//Machines are numbered 1-8, so when accessing arrays use (machine-1) to get index of that machine. 
+	//Tasks are a number 0-7, so you can use their value directly for array access.
 	
 	//This is the disgusting ass constructor that doesn't even work properly
 	
 	public Data() {
+		Scanner sc = null;
 		
 		try {
-			
-			
-			//Change eol to "\r\n" if you're using windows, and "\n" if you're using MacOs/Unix
-			String eol = "\n";
-			
-			Scanner sc = new Scanner(new FileInputStream("data.txt"));
-				sc.useDelimiter("forced partial assignment:");
-				String arr[] = sc.next().split(eol);
-				
-//				System.out.println(arr.length);
-				
-				for (int i = 1; i < arr.length; i ++) {
-					if (!(arr[i].trim() == "" || arr[i].trim() == eol)) {
-						System.out.println(arr[i]);
-						
-					}
-				}
-				
-				
-				sc.useDelimiter("forbidden machine:");
-				String arr1[] = sc.next().split(eol);
-				
-//				System.out.println(arr1.length);
-				
-				for (int i = 1; i < arr1.length; i ++) {
-					if (!(arr1[i].trim() == "" || arr1[i].trim() == eol)) {
-						System.out.println(arr1[i]);
-					}
-
-				}
-				System.out.println("");
-				
-				sc.useDelimiter("too-near tasks:");
-				String arr2[] = sc.next().split(eol);
-				
-//				System.out.println(arr1.length);
-				
-				for (int i = 1; i < arr2.length; i ++) {
-					if (!(arr2[i].trim() == "" || arr2[i].trim() == eol)) {
-						System.out.println(arr2[i]);
-					}
-
-				}
-				
-				System.out.println("");
-				
-				sc.useDelimiter("machine penalties:");
-				String arr3[] = sc.next().split(eol);
-				
-//				System.out.println(arr1.length);
-				
-				for (int i = 1; i < arr3.length; i ++) {
-					if (!(arr3[i].trim() == "" || arr3[i].trim() == eol)) {
-						System.out.println(arr3[i]);
-					}
-
-				}
-				
-				System.out.println("");
-				
-				sc.useDelimiter("too-near penalties:");
-				String arr4[] = sc.next().split(eol);
-				
-//				System.out.println(arr1.length);
-				String[][] macPenArrStr = new String[8][8];
-				
-				
-				//System.out.println(arr4.length);
-				
-				for (int i = 1; i < arr4.length; i ++) {
-					if (!(arr4[i].trim() == "" || arr4[i].trim() == eol)) {
-						System.out.println(arr4[i]);
-						macPenArrStr[i-1] = arr4[i].split(" "); 
-						for (int j = 0; j < 8; j ++) {
-							macPenArrInt[i-1][j] = Integer.parseInt(macPenArrStr[i-1][j]);
-						}
-						
-					}
-
-				}
-
-				System.out.println("");
+			String eol = System.getProperty("line.separator");
+			sc = new Scanner(new FileInputStream("data.txt"));
+			sc.useDelimiter(eol);
+			Pattern data = null;
+			Pattern header = Pattern.compile("Name:");
+			Pattern whitespace = Pattern.compile("");
+			int i;
+			if (sc.hasNext(header)) {
 				sc.nextLine();
-				String temp;
-				while (sc.hasNextLine()) {
-						temp = sc.nextLine();
-						if (!(temp.trim().equalsIgnoreCase("") || temp.trim().equalsIgnoreCase(eol) )) {
-							System.out.println(temp);
+				if (sc.hasNextLine()) {
+					name = sc.nextLine();	
+					
+					while (sc.hasNext("")) {
+						sc.nextLine();
+					}
+					
+					if (sc.hasNext("forced partial assignment:")) {
+						sc.next("forced partial assignment:");
+						
+						sc.useDelimiter("forbidden machine:");
+						String temp[] = sc.next().split(eol);
+						i = 0;
+						while (i < temp.length) {
+							if (temp[i].trim().length() == 0) {
+								i++;
+								continue;
+							}
+							else if (temp[i].length() != 6) {
+								sc.close();
+								throw new IOException("Invalid forced partial assignment data.");
+							}
+							else if (temp[i].charAt(0) == '(' && temp[i].charAt(5) == ')' && temp[i].charAt(2) == ',' && temp[i].charAt(3) == ' ') {
+								int machine = Character.getNumericValue((temp[i].charAt(1)));
+								int task = temp[i].charAt(4) - 65;
+//								System.out.println(machine);
+//								System.out.println(task);
+								if (machine <= 8 && machine > 0 && task < 8 && task >= 0 && forcedPartialAssignment[0][task] == 0 && forcedPartialAssignment[1][machine - 1] == 0)  {
+									forcedPartialAssignment[0][task] = machine; 
+									forcedPartialAssignment[1][machine -1] = task;
+								}
+								else {
+									sc.close();
+									throw new IOException("Invalid Forced Partial Assignment Data.");
+								}
+							}
+							
+							else {
+								sc.close();
+								throw new IOException("Invalid characters in forced partial assignment data.");
+							}
+							i++;
 						}
 						
+						
+						while (sc.hasNext("")) {
+							sc.nextLine();
+						}
+					
+						if (sc.nextLine().equalsIgnoreCase("forbidden machine:")) {
+
+							sc.useDelimiter("too-near tasks:");
+							String temp2[] = sc.next().split(eol);
+							i = 0;
+							while (i < temp2.length) {
+								if (temp2[i].trim().length() == 0) {
+									i++;
+									continue;
+								}
+								else if (temp2[i].length() != 6) {
+									sc.close();
+									throw new IOException("invalid forbidden machine data");
+								}
+								else if (temp2[i].charAt(0) == '(' && temp2[i].charAt(5) == ')' && temp2[i].charAt(2) == ',' && temp2[i].charAt(3) == ' ') {
+									int machine = Character.getNumericValue((temp2[i].charAt(1)));
+									int task = temp2[i].charAt(4) - 65;
+//									System.out.println(machine);
+//									System.out.println(task);
+											if (machine <= 8 && machine > 0 && task < 8 && task >= 0) {
+												if (forcedPartialAssignment[0][task] != machine) {
+														String t = Integer.toString(machine) + (char)(task + 65);
+														forbidden.add(t.toCharArray());
+												}
+												else {
+													sc.close();
+													throw new IOException("Conflicting forced and forbidden machines");
+												}
+												
+											}
+											else {
+												sc.close();
+												throw new IOException("Invalid Forced Partial Assignment Data.");
+											}
+								}
+								
+								else {
+									sc.close();
+									throw new IOException("Invalid characters in forced partial assignment data.");
+								}
+								i++;
+							}
+							
+							while (sc.hasNext("")) {
+								sc.nextLine();
+							}
+							if (sc.nextLine().equalsIgnoreCase("too-near tasks:")) {
+								sc.useDelimiter("machine penalties:");
+								String temp3[] = sc.next().split(eol);
+								
+								i = 0;		
+								while (i < temp3.length) {
+									if (temp3[i].trim().length() == 0) {
+										i++;
+										continue;
+									}
+									
+									else if (temp3[i].length() != 6){
+										sc.close();
+										throw new IOException("Invalid too-near task data");
+									}
+									else if (temp3[i].charAt(0) == '(' && temp3[i].charAt(5) == ')' && temp3[i].charAt(2) == ',' && temp3[i].charAt(3) == ' ') {
+										int task1 = temp2[i].charAt(4) - 65;
+										int task2 = temp2[i].charAt(4) - 65;
+										if (task1 < 8 && task1 >= 0 && task2 < 8 && task2 >= 0) {
+											tooNearTasks[task1][task2] = 1;
+											
+										}
+										else {
+											sc.close();
+											throw new IOException("Invalid too-near task data");
+											
+										}
+										
+									}
+									else {
+										sc.close();
+										throw new IOException("Invalid too-near task data");
+									}
+									i++;
+									}
+									
+								}
+								
+							else {
+								sc.close();
+								throw new IOException("Missing too-near tasks header");
+							}
+							
+							
+							while (sc.hasNext("")) {
+								sc.nextLine();
+							}
+							if (sc.nextLine().equalsIgnoreCase("machine penalties:")) {
+								sc.useDelimiter("too-near penalties:");
+								String temp4[] = sc.next().split(eol);
+								i = 0;
+								int row = 0;
+								String machinePenaltyString[][] = new String[8][8];
+								while (i < temp4.length) {
+									if (temp4[i].trim().equals("") || temp4[i].trim().equals(eol)) {
+										i++;
+										continue;
+									}
+									else if (temp4[i].trim().split(" ").length == 8) {
+										machinePenaltyString[row] = temp4[i].trim().split(" ");
+										for (int k = 0; k < 8; k++) {
+											try {
+//												System.out.println(row);
+//												System.out.println(k);
+												machinePenalties[row][k] = Integer.parseInt(machinePenaltyString[row][k]);
+											}
+											catch (NumberFormatException e){
+												sc.close();
+												throw new IOException("invalid machine penalty data.");
+												
+											}
+											
+										}
+										row ++;
+									}
+									else {
+										sc.close();
+										throw new IOException("invalid machine penalty data.");
+									}
+									i ++;
+								}
+							}
+							//CONTINUE FROM HERE
+							
+							while (sc.hasNext("")) {
+								sc.nextLine();
+							}
+							if (sc.nextLine().equalsIgnoreCase("too-near penalties:")) {
+								while (sc.hasNextLine()) {
+									String temp5 = sc.nextLine();
+									if (temp5.trim().equals("") || temp5.trim().equals(eol)) {
+										continue;
+									}
+									else if (temp5.charAt(0) == '(' && temp5.charAt(2) == ',' && temp5.charAt(temp5.length() - 1) == ')' && temp5.charAt(5) == ',' && temp5.charAt(6) == ' '){
+										int task1 = temp5.charAt(1) - 65;
+										int task2 = temp5.charAt(4) - 65;
+										int penalty = 0;
+										try {
+											
+											penalty = Integer.parseInt(temp5.substring(7,temp5.length() - 1));
+										}
+										catch (NumberFormatException e) {
+											sc.close();
+											throw new IOException("Invalid soft too near task data.");
+										}
+										if (task1 >= 0 && task1 < 8 && task2 >= 0 & task2 < 8) {
+											tooNearTasksSoft[task1][task2] = penalty;
+										}
+										else {
+											sc.close();
+											throw new IOException("invalid soft too near task data.");
+										}
+										
+									}
+									else {
+										sc.close();
+										throw new IOException("Invalid soft too near task data.");
+									}
+								
+								}
+								
+								
+							}
+							else {
+								sc.close();
+								throw new IOException("Missing too-near penalties header");
+							}
+						
+							
+							
+						}
+						else {
+							sc.close();
+							throw new IOException("Missing forbidden Machine header.");
+						}
+						
+						
+						
+						
+						
+						
 					}
+					else {
+						sc.close();
+						throw new IOException("Missing forced partial assignment header.");
+					}
+					}
+				else {
+					sc.close();
+					throw new IOException("Missing name.");
+					}
+				}
+				else {
+					sc.close();
+					throw new IOException("Missing \"name\" header.");
+				}
 
-
-			
+		
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+			sc.close();
 		}
 		
-		catch (IOException e) {
-			System.out.println("Something broke");
-		}
-
+		sc.close();
 		
 	}
 	
 	
-	public int getPenalty(int Machine, char task_c) {
-		int task = task_c - 65;
-		return macPenArrInt[Machine][task];
+	public ArrayList<char[]> getForced(){
+		ArrayList<char[]> forced = new ArrayList<char[]>();
+		for (int i = 0; i < 8; i ++) {
+			if (forcedPartialAssignment[0][i] != 0) {
+				String temp =  Integer.toString(forcedPartialAssignment[0][i]) + (char)(i + 65) ;
+				//System.out.println(temp);
+				forced.add(temp.toCharArray());
+			}
+			
+		}
+	return forced;	
+	}
+	public ArrayList<char[]> getForbidden(){
+
+		return forbidden;
+	}
+	
+	public int[][] getTooNearTask() {
+		return tooNearTasks;
+	}
+	
+	public int[][] getTooNearPenalties(){
+		return tooNearTasksSoft;
+	}
+	
+	public int[][] getPenalties(){
+		return machinePenalties;
 	}
 	
 	
