@@ -2,7 +2,7 @@ import java.util.ArrayList;
 
 public class Constraint {
 	
-	private ArrayList<char[]> forced;
+    private ArrayList<char[]> forced;
     private ArrayList<char[]> forbidden; 
 
     private int[][] penalties;
@@ -84,16 +84,16 @@ public class Constraint {
     }
     
     // note: for the constraints, need to figure out eg. too near pair (A,B) 8 --> A and 1 --> B
- 	//(maybe in init solution and search?)
- 	// tooNearTask neads to be 2d array with true if there is too near else false
- 	public boolean tooNearH(char pTask, char cTask){
- 		return tooNearTask[pTask][cTask];
- 	}
+    //(maybe in init solution and search?)
+    // tooNearTask neads to be 2d array with true if there is too near else false
+    public boolean tooNearH(char pTask, char cTask){
+        return tooNearTask[pTask][cTask];
+    }
  	
- 	// tooNearPenalties need to be 2d array with penalty value if exist, else 0
- 	public int tooNearS(char pTask, char cTask) {
- 		return tooNearPenalties[pTask][cTask];
- 	}
+    // tooNearPenalties need to be 2d array with penalty value if exist, else 0
+    public int tooNearS(char pTask, char cTask) {
+    	return tooNearPenalties[pTask][cTask];
+    }
     
     public int[][] getPenalties() {
     	return penalties;
