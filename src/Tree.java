@@ -61,83 +61,87 @@ public class Tree {
 		return tempNode.getLowerBound();
 	}
 	
-	//check if open
-	// 	if closed go to parent
-	// create children --> check if has children already
+	/**
+	 * The search() function searches for the combination of tasks that has the lowest sum of the penalties.
+	 * @author Esther Kim, Esther Chung
+	 */
 	public void search() {
+		// first create children nodes for the root node if the root node does not have any children.
+		if (!rootNode.getHasChildren()) {
+			createChildren(rootNode);
+		}
+		
+		// Now get the initial list of tasks that are worthwhile to go down;
+		// these are the ones that have smaller LB than the current LB.
 		ArrayList<Node> openChildrenNodes = new ArrayList<Node>();
 		for (Node childNode : rootNode.getChildren()) {
+			calcLowerBound(childNode);
 			if ((childNode.getLowerBound() < currentLowerBound) && childNode.getOpen()) {
 				openChildrenNodes.add(childNode);
 			}
+			else {
+				childNode.setOpen(false);
+			}
 		}
-		Node tempNode;
+		
+		// Now traverse around the tree
+		// start off with the node that has the lowest LB
+		// out of the list of the nodes that are worthwhile to go down.
+		Node tempNode = minLowerBound(openChildrenNodes);
 		Node minChild;
-		while (openChildrenNodes.size() != 0) {
-			tempNode = minLowerBound(openChildrenNodes);
-			// create children for node
+		while (!openChildrenNodes.isEmpty()) {
+			// create children for the current node (tempNode)
+			// first check if tempNode already has the children created
 			if (!tempNode.getHasChildren()) {
+				// if there is no children, then create children 
 				createChildren(tempNode);
+			}
+				
+			// check if children have been created; if they haven't been created
+			// it means that there are no available children for the current node.
+			if (!tempNode.getHasChildren()) {
+				// if there is no child that is available
+				// close this node and remove this node from the openChildren array.
+				// Then go to some other node that is in the openChildrenNodes array
+				// which has the minimum lower bound.
+				// tempNode.setOpen(false);
+				openChildrenNodes.remove(openChildrenNodes.indexOf(tempNode));
+				tempNode = minLowerBound(openChildrenNodes);
+			}
+			else {
+				// if there are children that are available,
+				// add these nodes to the openChildrenNodes array if they have
+				// lower bounds that are smaller than the currentLowerBound.
 				for (Node childNode : tempNode.getChildren()) {
 					calcLowerBound(childNode);
+					if ((childNode.getLowerBound() < currentLowerBound) && childNode.getOpen()) {
+						// add the worthwhile children to the openChildrenNodes
+						// only if we are not at the last machine.
+						if (tempNode.getMachine() != 6) {
+							openChildrenNodes.add(childNode);
+						}
+					}
 				}
-			}
-			// when at the end of tree 
-			if (tempNode.getMachine() == 6) {
-				minChild = minLowerBound(tempNode.getChildren());
-				if (currentLowerBound > minChild.getLowerBound()) {
-					currentLowerBound = minChild.getLowerBound();
-					finalSol = minChild.getHistory();
+				
+				// if we are at the last node, select the child node that has the
+				// smallest lower bound. Compare that lower bound with the current
+				// lower bound. If it is smaller than the current lower bound, 
+				// update the current lower bound, and update the final solution.
+				if (tempNode.getMachine() == 6) {
+					minChild = minLowerBound(tempNode.getChildren());
+					
+					if (currentLowerBound > minChild.getLowerBound()) {
+						currentLowerBound = minChild.getLowerBound();
+						finalSol = minChild.getHistory();
+					}
 				}
-				tempNode.setOpen(false);
+				
+				// remove the current tempNode and move to the best node
 				openChildrenNodes.remove(openChildrenNodes.indexOf(tempNode));
-				for (Node childNode : tempNode.getChildren()) {
-					if (currentLowerBound < childNode.getLowerBound()) {
-						openChildrenNodes.remove(openChildrenNodes.indexOf(childNode));	
-					}
-				}
+				tempNode = minLowerBound(openChildrenNodes);
 			}
-			// when at middle of tree
-			else {
-				for (Node childNode : tempNode.getChildren()) {
-					if (currentLowerBound > childNode.getLowerBound()) {
-						openChildrenNodes.add(childNode);	
-					}
-					else {
-						childNode.setOpen(false);
-					}
-				}
-			}
-			
-			
-			
-			//Check if node has children, if not, generate them and calc LB
-			//if current node is node 6, then find best child, find LB for each child
-			//update CLB if possible, and close and remove all nodes in openChildrenNodes 
-			//with LB > CLB
-			//close parent
-			
-			//else:
-			//add all new children with LB < CLB to openChildrenNode
-			
-			
 		}
 	}
-	
-	/* 	
-	 * Node[] openChildrenNodes;
-	 * 
-	 * 		if less than curentLB
-	 * 			check if have children
-	 * 				if no children --> create children
-	 * 					store all children in openChildrenNodes
-	 * 					
-	 * 				else has children 
-	 * 					check if child is closed
-	 * 					store all open children in openChildrenNodes 
-	 * 		else greater than currentLB
-	 * 			close the node 
-	 */
 
 	/**
 	 * Class minLowerBound returns the child node with minimum lower bound
