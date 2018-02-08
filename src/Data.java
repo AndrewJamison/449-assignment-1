@@ -13,7 +13,7 @@ public class Data {
 	public String name;
 	public int[][] machinePenalties = new int[8][8];
 	public int[][] forcedPartialAssignment = new int[2][8];
-	public int[][] tooNearTasks = new int[8][8];
+	public boolean[][] tooNearTasks = new boolean[8][8];
 	public int[][] tooNearTasksSoft = new int[8][8];
 	ArrayList<char[]> forbidden = new ArrayList<char[]>();
 	
@@ -149,7 +149,7 @@ public class Data {
 										int task1 = temp2[i].charAt(4) - 65;
 										int task2 = temp2[i].charAt(4) - 65;
 										if (task1 < 8 && task1 >= 0 && task2 < 8 && task2 >= 0) {
-											tooNearTasks[task1][task2] = 1;
+											tooNearTasks[task1][task2] = true;
 											
 										}
 										else {
@@ -316,7 +316,7 @@ public class Data {
 		return forbidden;
 	}
 	
-	public int[][] getTooNearTask() {
+	public boolean[][] getTooNearTask() {
 		return tooNearTasks;
 	}
 	

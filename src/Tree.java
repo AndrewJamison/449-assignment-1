@@ -3,7 +3,7 @@ import java.util.ArrayList;
 public class Tree {
 		Constraint constraint;
 		Node rootNode;
-		ArrayList<Node> finalSol;
+		ArrayList<Character> finalSol;
 		static int currentLowerBound;
 		
 	public Tree() {
@@ -15,7 +15,7 @@ public class Tree {
 	public static void main(String[] args) {
 		Tree tree = new Tree();
 		currentLowerBound = tree.initSolution();
-		search();
+		tree.search();
 	}
 	
 	/**
@@ -45,7 +45,7 @@ public class Tree {
 				tempNode.setOpen(false);
 				tempNode = tempNode.getParent();
 			} else {
-				for (Node childNode : tempNode.getChildrent()) {
+				for (Node childNode : tempNode.getChildren()) {
 					calcLowerBound(childNode);
 				}
 				tempNode = minLowerBound(tempNode.getChildren());
@@ -192,9 +192,9 @@ public class Tree {
  	 */
 	public void calcLowerBound(Node node) {
 		Node calcNode = node; //the node whose LB is being calculated
-		int[][] penalty = constraint.getMachinePenalties(); //uses 2D penalty array from the constraint class
+		int[][] penalty = constraint.getPenalties(); //uses 2D penalty array from the constraint class
 		ArrayList<Character> history = calcNode.getHistory(); //list of the tasks assigned prior to this current node and including this current nodes task
-		ArrayList<Character> history = calcNode.getHistory(); //list of the tasks assigned prior to this current node
+
 		int lowerbound = calcNode.getLowerBound(); //initialize lowerbound to current nodes set lowerbound (zero or if there is a soft constraint it would take that penalty to start)
 		
 		//calculate the sum of the penalties for the tasks assigned in the given history ArrayList
@@ -228,13 +228,13 @@ public class Tree {
 		 */
 		
 		// getting penalty array from constraint class
-		int[][] penalty = constraint.getPenalty();
+		int[][] penalty = constraint.getPenalties();
 		// create an array of nodes
 		ArrayList<Node> childrenArray = new ArrayList<Node>();
 		
 		// variables needed
 		int parentMachine = parent.getMachine(); // get the parent's machine #
-		char[] availableTasks = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H']; // the available tasks
+		char[] availableTasks = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'}; // the available tasks
 		ArrayList<Character> takenTasks = parent.getHistory();  // get the history of the tasks that have been taken so far
 		
 		// Take out the tasks that are already taken from the availableTasks array
