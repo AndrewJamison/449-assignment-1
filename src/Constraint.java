@@ -22,9 +22,6 @@ public class Constraint {
     	this.tooNearPenalties = data.getTooNearPenalties();
     	this.penalties = data.getPenalties();
     	
-    	tooNearPenalties = new int[8][8];
-    	tooNearTask = new boolean[8][8];
-    	
     	setPenaltySet();
 		
 	}
