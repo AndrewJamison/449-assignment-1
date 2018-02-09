@@ -79,9 +79,7 @@ public class Constraint {
     		penalties[machine][task] = -1; //access the index of the given machine and task in the 2D array and set the value to -1 so that it cannot be assigned
     	}
     }
-    
-    // note: for the constraints, need to figure out eg. too near pair (A,B) 8 --> A and 1 --> B
-    //(maybe in init solution and search?)
+
     // tooNearTask neads to be 2d array with true if there is too near else false
     //-65 to convert the chars passed to ints to be used as the indices accessed for the 2D array
     public boolean tooNearH(char pTask, char cTask){
