@@ -86,18 +86,25 @@ public class Tree {
 		Node tempNode;
 		Node minChild;
 		while (!openChildrenNodes.isEmpty()) {
+			// Go to the node that has the smallest lower bound.
 			tempNode = minLowerBound(openChildrenNodes);
+			
 			// create children for the current node (tempNode)
 			// first check if tempNode already has the children created
 			if (!tempNode.getHasChildren()) {
 				// if there is no children, then create children 
 				createChildren(tempNode);
+				
+				// calculate the lower bound for each of the children
 				for (Node childNode : tempNode.getChildren()) {
 					calcLowerBound(childNode);
 				}
-				
 			}
 		
+			// if we are at the second last level and there are children,
+			// first find which child has the smallest lower bound.
+			// Then set the final solution to the child's lower bound
+			// if the child's lower bound is smaller than the current lower bound.
 			if (tempNode.getMachine() == 6 && !tempNode.getChildren().isEmpty()) {
 				minChild = minLowerBound(tempNode.getChildren());
 				
@@ -108,27 +115,26 @@ public class Tree {
 				
 			}
 			else {
+				// If we are at levels other than 6
+				// or if we do not have any children
+				// then execute the following.
 				
-				// if there are children that are available,
+				// if there are children that are available (we are at levels other than 6),
 				// add these nodes to the openChildrenNodes array if they have
 				// lower bounds that are smaller than the currentLowerBound.
+				// if we do not have any children, the following loop will not execute.
 				for (Node childNode : tempNode.getChildren()) {
 					if ((childNode.getLowerBound() < currentLowerBound) && childNode.getOpen()) {
 						openChildrenNodes.add(childNode);
 						System.out.println(childNode.getMachine());
 					}
 				}
-				
-				// if we are at the last node, select the child node that has the
-				// smallest lower bound. Compare that lower bound with the current
-				// lower bound. If it is smaller than the current lower bound, 
-				// update the current lower bound, and update the final solution.
-		
-				
-				// remove the current tempNode and move to the best node
-				
 			}
+			
+			// since we have already visited this node, close it.
 			tempNode.setOpen(false);
+			
+			// remove the current node from the openChildrenNodes because we have already checked it.
 			openChildrenNodes.remove(openChildrenNodes.indexOf(tempNode));
 		}
 	}
