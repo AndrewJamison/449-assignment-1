@@ -27,7 +27,7 @@ public class Data {
 		
 		try {
 			String eol = System.getProperty("line.separator");
-			sc = new Scanner(new FileInputStream("data.txt"));
+			sc = new Scanner(new FileInputStream("data3.txt"));
 			sc.useDelimiter(eol);
 			Pattern data = null;
 			Pattern header = Pattern.compile("Name:");
@@ -146,8 +146,8 @@ public class Data {
 										throw new IOException("Invalid too-near task data");
 									}
 									else if (temp3[i].charAt(0) == '(' && temp3[i].charAt(5) == ')' && temp3[i].charAt(2) == ',' && temp3[i].charAt(3) == ' ') {
-										int task1 = temp2[i].charAt(4) - 65;
-										int task2 = temp2[i].charAt(4) - 65;
+										int task1 = temp3[i].charAt(1) - 65;
+										int task2 = temp3[i].charAt(4) - 65;
 										if (task1 < 8 && task1 >= 0 && task2 < 8 && task2 >= 0) {
 											tooNearTasks[task1][task2] = true;
 											

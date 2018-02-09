@@ -55,6 +55,7 @@ public class Tree {
 			
 			// When it reaches at the end node, exit loop
 			if (tempNode.getMachine() == 7) break;
+			
 		}
 
 		tempNode.getParent().setOpen(false);
