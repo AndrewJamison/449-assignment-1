@@ -5,10 +5,13 @@ import java.util.regex.Pattern;
 import java.lang.ArrayIndexOutOfBoundsException;
 import java.lang.NumberFormatException;
 import java.util.ArrayList;
+import java.util.NoSuchElementException;
 
 
 public class Data {
 	
+	public boolean errors;
+	public String errormessage;
 	private String fileName;
 	public String name;
 	public int[][] machinePenalties = new int[8][8];
@@ -25,7 +28,7 @@ public class Data {
 	public Data(String filename) {
 		Scanner sc = null;
 		
-		
+		try {
 			String eol = System.getProperty("line.separator");
 			sc = new Scanner(new FileInputStream(filename));
 			sc.useDelimiter(eol);
@@ -55,7 +58,7 @@ public class Data {
 							}
 							else if (temp[i].length() != 6) {
 								sc.close();
-								throw new IOException("partial assignment error");
+								throw new IOException("Error while parsing input file");
 							}
 							else if (temp[i].charAt(0) == '(' && temp[i].charAt(5) == ')' && temp[i].charAt(2) == ',' && temp[i].charAt(3) == ' ') {
 								int machine = Character.getNumericValue((temp[i].charAt(1)));
@@ -96,7 +99,7 @@ public class Data {
 								}
 								else if (temp2[i].length() != 6) {
 									sc.close();
-									throw new IOException("invalid machine/task");
+									throw new IOException("Error while parsing input file");
 								}
 								else if (temp2[i].charAt(0) == '(' && temp2[i].charAt(5) == ')' && temp2[i].charAt(2) == ',' && temp2[i].charAt(3) == ' ') {
 									int machine = Character.getNumericValue((temp2[i].charAt(1)));
@@ -143,7 +146,7 @@ public class Data {
 									
 									else if (temp3[i].length() != 6){
 										sc.close();
-										throw new IOException("invalid machine/task");
+										throw new IOException("Error while parsing input file");
 									}
 									else if (temp3[i].charAt(0) == '(' && temp3[i].charAt(5) == ')' && temp3[i].charAt(2) == ',' && temp3[i].charAt(3) == ' ') {
 										int task1 = temp3[i].charAt(1) - 65;
@@ -287,8 +290,15 @@ public class Data {
 					throw new IOException("Error while parsing input file");
 				}
 
-		
-		
+		}
+		catch (IOException e) {
+			errors = true;
+			errormessage = e.getMessage();
+		}
+		catch (NoSuchElementException e) {
+			errors = true;
+			errormessage = "Error while parsing input file";
+		}
 		
 		
 		sc.close();

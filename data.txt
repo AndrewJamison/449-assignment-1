@@ -2,13 +2,26 @@ Name:
 data sample 2
 
 forced partial assignment:
+
+
+
 (1, A)
+
+
+
 (2, B)
 
 forbidden machine:
 
 
+
+
+
 too-near tasks:
+
+
+
+
 (A, B)
 
 machine penalties:

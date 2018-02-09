@@ -8,39 +8,52 @@ public class Tree {
 		static Node rootNode;
 		static ArrayList<Character> finalSol;
 		static int currentLowerBound;
+		static boolean errors;
+		static String errormessage;
 		
 	public Tree(String filename) {
 		this.constraint = new Constraint(filename);
+		if (this.constraint.errors) {
+			errors = this.constraint.errors;
+			errormessage = this.constraint.errormessage;
+		}
 		this.rootNode = new Node(null, -1, ' ');
 		this.finalSol = new ArrayList<>(); 
 	}
 
 	public static void main(String[] args) {
 		String sol;
+		
 		Tree tree = new Tree(args[0]);
-		currentLowerBound = tree.initSolution();
-		if (currentLowerBound == -1) {
-			sol = "No valid solution possible!";
+		if (tree.errors) {
+			System.out.println(errormessage);
 		}
 		else {
-			search();
-			System.out.println(finalSol.toString());
-			System.out.println(currentLowerBound);
-			
-			sol = "Solution";
-			for (char task: finalSol) {
-				sol = sol + " " + task;
+			currentLowerBound = tree.initSolution();
+			if (currentLowerBound == -1) {
+				sol = "No valid solution possible!";
 			}
-			sol = sol + "; Quality: " + Integer.toString(currentLowerBound);
-		}	
-		try {			
-			BufferedWriter writer = new BufferedWriter(new FileWriter(args[1]));
-			writer.write(sol);
+			else {
+				search();
+				System.out.println(finalSol.toString());
+				System.out.println(currentLowerBound);
 				
-			writer.close();
-		} catch (IOException ex) {
-			System.err.println("Error writing file");
-		}	
+				sol = "Solution";
+				for (char task: finalSol) {
+					sol = sol + " " + task;
+				}
+				sol = sol + "; Quality: " + Integer.toString(currentLowerBound);
+			}	
+			try {	
+				BufferedWriter writer = new BufferedWriter(new FileWriter(args[1]));
+				writer.write(sol);
+					
+				writer.close();
+			} catch (IOException e) {
+				System.err.println("Error writing file");
+			}
+		}
+		
 	}
 
 	

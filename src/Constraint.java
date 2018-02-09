@@ -5,6 +5,8 @@ public class Constraint {
     private ArrayList<char[]> forced;
     private ArrayList<char[]> forbidden; 
 
+    public boolean errors;
+    public String errormessage;
     private int[][] penalties;
     private int[][] tooNearPenalties;
     private boolean[][] tooNearTask;
@@ -15,6 +17,10 @@ public class Constraint {
     	
     	// Get data from the class Data
     	this.data = new Data(filename);
+    	if (this.data.errors) {
+    		errors = true;
+    		errormessage = this.data.errormessage;
+    	}
     	
     	this.forced = data.getForced();
     	this.forbidden = data.getForbidden();
