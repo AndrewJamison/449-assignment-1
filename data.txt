@@ -3,14 +3,13 @@ data sample 2
 
 forced partial assignment:
 (1, A)
-(6, F)
+(2, B)
 
 forbidden machine:
 (5, C)
-(2, B)
 
 too-near tasks:
-(D, E)
+(A, B)
 
 machine penalties:
 1 3 5 7 8 2 9 4
