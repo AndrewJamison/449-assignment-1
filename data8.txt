@@ -1,0 +1,20 @@
+Name:
+data sample 8
+
+forced partial assignment:
+
+forbidden machine:
+
+too-near tasks:
+
+machine penalties:
+2 2 2 2 2 2 2 2
+2 2 2 2 2 2 2 2
+2 2 2 2 2 2 2 2
+2 2 2 2 2 2 2 2
+2 2 2 2 2 2 2 2
+2 2 2 2 2 2 2 2
+2 2 2 2 2 2 2 2
+2 2 2 2 2 2 2 2
+
+too-near penalties:
