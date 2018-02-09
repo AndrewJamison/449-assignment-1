@@ -29,42 +29,52 @@ public class Data {
 		Scanner sc = null;
 		
 		try {
-			String eol = System.getProperty("line.separator");
+			String eol = System.getProperty("line.separator"); //get line separator because apparently windows and Linux have different ones
 			sc = new Scanner(new FileInputStream(filename));
 			sc.useDelimiter(eol);
 			Pattern data = null;
 			Pattern header = Pattern.compile("Name:");
 			Pattern whitespace = Pattern.compile("");
 			int i;
+			//make sure that the name header is there
 			if (sc.hasNext(header)) {
-				sc.nextLine();
+				sc.nextLine();	//skip the name header
 				if (sc.hasNextLine()) {
-					name = sc.nextLine();	
+					name = sc.nextLine();	//read in the name
 					
+					
+					//read past any extra empty lines
 					while (sc.hasNext("")) {
 						sc.nextLine();
 					}
 					
+					
+					//make sure it has the next header
 					if (sc.hasNext("forced partial assignment:")) {
 						sc.next("forced partial assignment:");
 						
+						
+						//read all data until the next header
 						sc.useDelimiter("forbidden machine:");
-						String temp[] = sc.next().split(eol);
+						String temp[] = sc.next().split(eol); //split each line into it's own entry in an array
 						i = 0;
 						while (i < temp.length) {
-							if (temp[i].trim().length() == 0) {
+							if (temp[i].trim().length() == 0) { //if it is an empty line ignore it
 								i++;
 								continue;
 							}
-							else if (temp[i].length() != 6) {
+							else if (temp[i].trim().length() != 6) { //if the length of the line isn't 6 then its obviously incorrect data.
 								sc.close();
 								throw new IOException("Error while parsing input file");
 							}
+							//make sure the data has the right format. I dont know how regex works obviously
 							else if (temp[i].charAt(0) == '(' && temp[i].charAt(5) == ')' && temp[i].charAt(2) == ',' && temp[i].charAt(3) == ' ') {
-								int machine = Character.getNumericValue((temp[i].charAt(1)));
-								int task = temp[i].charAt(4) - 65;
+								int machine = Character.getNumericValue((temp[i].charAt(1))); //read in the machine number
+								int task = temp[i].charAt(4) - 65; //read in task letter and convert to int
 //								System.out.println(machine);
 //								System.out.println(task);
+								
+								//make sure the machine and tasks numbers are valid
 								if (machine <= 8 && machine > 0 && task < 8 && task >= 0 && forcedPartialAssignment[0][task] == 0 && forcedPartialAssignment[1][machine - 1] == 0)  {
 									forcedPartialAssignment[0][task] = machine; 
 									forcedPartialAssignment[1][machine -1] = task;
@@ -82,57 +92,61 @@ public class Data {
 							i++;
 						}
 						
-						
+						//get rid of empty lines
 						while (sc.hasNext("")) {
 							sc.nextLine();
 						}
-					
+						//make sure the next line is the correct header
 						if (sc.nextLine().equalsIgnoreCase("forbidden machine:")) {
-
+							//read all data until the next header
 							sc.useDelimiter("too-near tasks:");
 							String temp2[] = sc.next().split(eol);
 							i = 0;
 							while (i < temp2.length) {
-								if (temp2[i].trim().length() == 0) {
+								if (temp2[i].trim().length() == 0) {//ignore empty lines
 									i++;
 									continue;
-								}
-								else if (temp2[i].length() != 6) {
+								}	//if line length isnt 6 then it is incorrect data
+								else if (temp2[i].trim().length() != 6) {
 									sc.close();
 									throw new IOException("Error while parsing input file");
 								}
+								//make sure the data is the correct format
 								else if (temp2[i].charAt(0) == '(' && temp2[i].charAt(5) == ')' && temp2[i].charAt(2) == ',' && temp2[i].charAt(3) == ' ') {
 									int machine = Character.getNumericValue((temp2[i].charAt(1)));
 									int task = temp2[i].charAt(4) - 65;
 //									System.out.println(machine);
 //									System.out.println(task);
 											if (machine <= 8 && machine > 0 && task < 8 && task >= 0) {
-												if (forcedPartialAssignment[0][task] != machine) {
+												if (forcedPartialAssignment[0][task] != machine) { //make sure the forcbidden task isnt already forced
 														String t = Integer.toString(machine) + (char)(task + 65);
 														forbidden.add(t.toCharArray());
 												}
+												
 												else {
+													//throw exception because forced and forbidden machines are the same
 													sc.close();
 													throw new IOException("No valid solution possible!");
 												}
 												
 											}
-											else {
+											else {//invalid input data
 												sc.close();
 												throw new IOException("invalid machine/task");
 											}
 								}
 								
-								else {
+								else {//invalid input data
 									sc.close();
 									throw new IOException("invalid machine/task");
 								}
 								i++;
 							}
-							
+							//read any extra empty lines
 							while (sc.hasNext("")) {
 								sc.nextLine();
 							}
+							//make sure the next header is correct
 							if (sc.nextLine().equalsIgnoreCase("too-near tasks:")) {
 								sc.useDelimiter("machine penalties:");
 								String temp3[] = sc.next().split(eol);
