@@ -41,8 +41,8 @@ error message even if the inputs are valid.
 ** Credits to (alphabetical order)
 =================================================================
 Christilyn Arjona
-Esther HaKyung Chung
-Jona Mikhaela Grageda
+HaKyung Chung
+Jona Grageda
 Andrew Jamison
-Esther Sunah Kim
 Ga Hyung Kim
+Sunah Kim
