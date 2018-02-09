@@ -16,32 +16,31 @@ public class Tree {
 	}
 
 	public static void main(String[] args) {
+		String sol;
 		Tree tree = new Tree("data.txt");
 		currentLowerBound = tree.initSolution();
 		if (currentLowerBound == -1) {
-			//no solution
+			sol = "No valid solution possible!";
 		}
 		else {
 			search();
 			System.out.println(finalSol.toString());
 			System.out.println(currentLowerBound);
 			
-			try {
-				String sol = "Solution";
-				for (char task: finalSol) {
-					sol = sol + " " + task;
-				}
-				sol = sol + "; Quality: " + Integer.toString(currentLowerBound);
+			sol = "Solution";
+			for (char task: finalSol) {
+				sol = sol + " " + task;
+			}
+			sol = sol + "; Quality: " + Integer.toString(currentLowerBound);
+		}	
+		try {			
+			BufferedWriter writer = new BufferedWriter(new FileWriter(args[1]));
+			writer.write(sol);
 				
-				BufferedWriter writer = new BufferedWriter(new FileWriter(args[1]));
-				writer.write(sol);
-				
-				writer.close();
-			} catch (IOException ex) {
-				System.err.println("Error writing file");
-			}	
-		}
-		
+			writer.close();
+		} catch (IOException ex) {
+			System.err.println("Error writing file");
+		}	
 	}
 
 	
