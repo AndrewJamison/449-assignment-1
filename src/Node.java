@@ -1,6 +1,13 @@
 import java.util.ArrayList;
 
+/**
+ * 
+ * Implements individual Node on the Tree generated through branch and bound algorithm
+ *
+ */
+
 public class Node {
+	
 	private Node parent;
 	private int lowerBound;
 	private ArrayList<Node> children;
@@ -10,6 +17,13 @@ public class Node {
 	private boolean open;
 	private boolean hasChildren;
 	
+	/**
+	 * Constructor 
+	 * 
+	 * @param parent Parent node 
+	 * @param machine machine assigned
+	 * @param task task assigned
+	 */
 	Node(Node parent, int machine, char task){
 		this.parent = parent;
 		this.machine = machine;
@@ -18,7 +32,6 @@ public class Node {
 		this.hasChildren = false;
 		children = new ArrayList<>();
 		this.lowerBound = 0;
-		children = new ArrayList<Node>();
 	}
 	
 	public boolean getHasChildren() {
