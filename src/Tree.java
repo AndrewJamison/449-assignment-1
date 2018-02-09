@@ -193,7 +193,7 @@ public class Tree {
 				ArrayList<Character> takenTasks = parent.getHistory();  // get the history of the tasks that have been taken so far
 				
 				// Take out the tasks that are already taken from the availableTasks array
-				for (int i = 0; i < parentMachine; i++) {
+				for (int i = 0; i <= parentMachine; i++) {
 					for (int j = 0; j < availableTasks.length; j++) {
 						if (takenTasks.get(i) == availableTasks[j]) {
 							availableTasks[j] = Character.MIN_VALUE;
