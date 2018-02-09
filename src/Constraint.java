@@ -11,10 +11,10 @@ public class Constraint {
         
     private Data data;
     
-    public Constraint() {
+    public Constraint(String filename) {
     	
     	// Get data from the class Data
-    	this.data = new Data();
+    	this.data = new Data(filename);
     	
     	this.forced = data.getForced();
     	this.forbidden = data.getForbidden();
