@@ -2,7 +2,6 @@ Name:
 data sample 2
 
 forced partial assignment:
-(1, A)
 (6, F)
 
 forbidden machine:

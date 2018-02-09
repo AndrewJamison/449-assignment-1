@@ -6,14 +6,14 @@ public class Tree {
 		static ArrayList<Character> finalSol;
 		static int currentLowerBound;
 		
-	public Tree() {
-		this.constraint = new Constraint();
+	public Tree(String filename) {
+		this.constraint = new Constraint(filename);
 		this.rootNode = new Node(null, -1, ' ');
 		this.finalSol = new ArrayList<>(); 
 	}
 
 	public static void main(String[] args) {
-		Tree tree = new Tree();
+		Tree tree = new Tree("data.txt");
 		currentLowerBound = tree.initSolution();
 		search();
 		System.out.println(finalSol.toString());

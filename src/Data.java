@@ -22,12 +22,12 @@ public class Data {
 	
 	//This is the disgusting ass constructor that doesn't even work properly
 	
-	public Data() {
+	public Data(String filename) {
 		Scanner sc = null;
 		
 		try {
 			String eol = System.getProperty("line.separator");
-			sc = new Scanner(new FileInputStream("data3.txt"));
+			sc = new Scanner(new FileInputStream(filename));
 			sc.useDelimiter(eol);
 			Pattern data = null;
 			Pattern header = Pattern.compile("Name:");
