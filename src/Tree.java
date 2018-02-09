@@ -1,3 +1,6 @@
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class Tree {
@@ -323,17 +326,30 @@ public class Tree {
 	 * Main method
 	 */
 	public static void main(String[] args) {
-		Tree tree = new Tree("data.txt");
+		String sol;
+		Tree tree = new Tree(args[0]);
 		currentLowerBound = tree.initSolution();
-		
 		if (currentLowerBound == -1) {
-			System.out.println("No solution.");
+			sol = "No valid solution possible!";
 		}
 		else {
 			search();
 			System.out.println(finalSol.toString());
 			System.out.println(currentLowerBound);
-
-		}
+			
+			sol = "Solution";
+			for (char task: finalSol) {
+				sol = sol + " " + task;
 			}
+			sol = sol + "; Quality: " + Integer.toString(currentLowerBound);
+		}	
+		try {			
+			BufferedWriter writer = new BufferedWriter(new FileWriter(args[1]));
+			writer.write(sol);
+				
+			writer.close();
+		} catch (IOException ex) {
+			System.err.println("Error writing file");
+		}	
+	}
 }

@@ -10,12 +10,12 @@ public class Node {
 	
 	private Node parent;
 	private int lowerBound;
-	private ArrayList<Node> children;
+	private ArrayList<Node> children; //all the children of that parent node will be stored in this array list
 	private int machine;
 	private char task;
 	private ArrayList<Character> history = new ArrayList<Character>(); //all the machine task assignments for penalty sum 
-	private boolean open;
-	private boolean hasChildren;
+	private boolean open; //boolean to check if the node hasn't been closed
+	private boolean hasChildren; //boolean to check if children have been created for that node
 	
 	/**
 	 * Constructor 
