@@ -148,35 +148,38 @@ public class Data {
 							}
 							//make sure the next header is correct
 							if (sc.nextLine().equalsIgnoreCase("too-near tasks:")) {
+								//read data until next header
 								sc.useDelimiter("machine penalties:");
 								String temp3[] = sc.next().split(eol);
 								
 								i = 0;		
 								while (i < temp3.length) {
-									if (temp3[i].trim().length() == 0) {
+									if (temp3[i].trim().length() == 0) {//ignore any empty lines
 										i++;
 										continue;
 									}
 									
-									else if (temp3[i].length() != 6){
+									else if (temp3[i].trim().length() != 6){ //if input length is wrong then throw exception
 										sc.close();
 										throw new IOException("Error while parsing input file");
 									}
+									//make sure data is of correct format
 									else if (temp3[i].charAt(0) == '(' && temp3[i].charAt(5) == ')' && temp3[i].charAt(2) == ',' && temp3[i].charAt(3) == ' ') {
 										int task1 = temp3[i].charAt(1) - 65;
 										int task2 = temp3[i].charAt(4) - 65;
+										//make sure tasks are valid numbers
 										if (task1 < 8 && task1 >= 0 && task2 < 8 && task2 >= 0) {
 											tooNearTasks[task1][task2] = true;
 											
 										}
-										else {
+										else {//invalid data
 											sc.close();
 											throw new IOException("Invalid machine/task");
 											
 										}
 										
 									}
-									else {
+									else {//invalid data
 										sc.close();
 										throw new IOException("invalid machine/task");
 									}
@@ -185,35 +188,37 @@ public class Data {
 									
 								}
 								
-							else {
+							else {//invalid data
 								sc.close();
 								throw new IOException("Error while parsing input file");
 							}
 							
-							
+							//read empty lines
 							while (sc.hasNext("")) {
 								sc.nextLine();
 							}
+							//make sure next header is correct
 							if (sc.nextLine().equalsIgnoreCase("machine penalties:")) {
+								//read data until next header
 								sc.useDelimiter("too-near penalties:");
 								String temp4[] = sc.next().split(eol);
 								i = 0;
 								int row = 0;
 								String machinePenaltyString[][] = new String[8][8];
 								while (i < temp4.length) {
-									if (temp4[i].trim().equals("") || temp4[i].trim().equals(eol)) {
+									if (temp4[i].trim().equals("") || temp4[i].trim().equals(eol)) { //skip any empty lines
 										i++;
 										continue;
 									}
-									else if (temp4[i].trim().split(" ").length == 8) {
+									else if (temp4[i].trim().split(" ").length == 8) { //if the row has 8 entries then it might be valid
 										machinePenaltyString[row] = temp4[i].trim().split(" ");
 										for (int k = 0; k < 8; k++) {
 											try {
 //												System.out.println(row);
 //												System.out.println(k);
-												machinePenalties[row][k] = Integer.parseInt(machinePenaltyString[row][k]);
+												machinePenalties[row][k] = Integer.parseInt(machinePenaltyString[row][k]); //try to convert entries to int
 											}
-											catch (NumberFormatException e){
+											catch (NumberFormatException e){ //if they cant be converted to int throw an exception
 												sc.close();
 												throw new IOException("machine penalty error");
 												
@@ -222,40 +227,40 @@ public class Data {
 										}
 										row ++;
 									}
-									else {
+									else {//invalid machine penalty data
 										sc.close();
 										throw new IOException("machine penalty error");
 									}
 									i ++;
 								}
 							}
-							//CONTINUE FROM HERE
+							//
 							
 							while (sc.hasNext("")) {
 								sc.nextLine();
-							}
+							}//make sure the next header is correct
 							if (sc.nextLine().equalsIgnoreCase("too-near penalties:")) {
 								while (sc.hasNextLine()) {
 									String temp5 = sc.nextLine();
 									if (temp5.trim().equals("") || temp5.trim().equals(eol)) {
 										continue;
-									}
+									}//make sure the data is the correct format
 									else if (temp5.charAt(0) == '(' && temp5.charAt(2) == ',' && temp5.charAt(temp5.length() - 1) == ')' && temp5.charAt(5) == ',' && temp5.charAt(6) == ' '){
 										int task1 = temp5.charAt(1) - 65;
 										int task2 = temp5.charAt(4) - 65;
 										int penalty = 0;
 										try {
 											
-											penalty = Integer.parseInt(temp5.substring(7,temp5.length() - 1));
+											penalty = Integer.parseInt(temp5.substring(7,temp5.length() - 1)); //read in the penalty and try to convert to int
 										}
-										catch (NumberFormatException e) {
+										catch (NumberFormatException e) { //throw an exception if it cant be converted.
 											sc.close();
 											throw new IOException("invalid penalty");
 										}
-										if (task1 >= 0 && task1 < 8 && task2 >= 0 & task2 < 8) {
+										if (task1 >= 0 && task1 < 8 && task2 >= 0 & task2 < 8) { //make sure the tasks are valid
 											tooNearTasksSoft[task1][task2] = penalty;
 										}
-										else {
+										else {//invalid data
 											sc.close();
 											throw new IOException("invalid penalty");
 										}
@@ -305,22 +310,22 @@ public class Data {
 				}
 
 		}
-		catch (IOException e) {
+		catch (IOException e) { //set the error flag, and pass the error message up a level.
 			errors = true;
 			errormessage = e.getMessage();
 		}
-		catch (NoSuchElementException e) {
+		catch (NoSuchElementException e) { //this exception will be thrown if the headers are missing
 			errors = true;
 			errormessage = "Error while parsing input file";
 		}
 		
 		
-		sc.close();
+		sc.close(); //close the scanner
 		
 	}
 	
 	
-	public ArrayList<char[]> getForced(){
+	public ArrayList<char[]> getForced(){ //create and return arraylist of forced partial assignments.
 		ArrayList<char[]> forced = new ArrayList<char[]>();
 		for (int i = 0; i < 8; i ++) {
 			if (forcedPartialAssignment[0][i] != 0) {
@@ -332,20 +337,20 @@ public class Data {
 		}
 	return forced;	
 	}
-	public ArrayList<char[]> getForbidden(){
+	public ArrayList<char[]> getForbidden(){ //return arraylist of forbidden assignments
 
 		return forbidden;
 	}
 	
-	public boolean[][] getTooNearTask() {
+	public boolean[][] getTooNearTask() { //return boolean array of too near tasks
 		return tooNearTasks;
 	}
 	
-	public int[][] getTooNearPenalties(){
+	public int[][] getTooNearPenalties(){ //return int array of too near penalties
 		return tooNearTasksSoft;
 	}
 	
-	public int[][] getPenalties(){
+	public int[][] getPenalties(){ //return array of machine penalties
 		return machinePenalties;
 	}
 	
