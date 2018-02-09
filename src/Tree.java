@@ -1,31 +1,20 @@
 import java.util.ArrayList;
 
 public class Tree {
-		static Constraint constraint;
-		static Node rootNode;
-		static ArrayList<Character> finalSol;
-		static int currentLowerBound;
-		
+	static Constraint constraint; // the Constraint object that has all the constraints
+	static Node rootNode; // the rootNode of the tree; so that we can keep track of the other nodes
+	static ArrayList<Character> finalSol; // the path to the final solution that we have found so far
+	static int currentLowerBound; // the lower bound of the final solution that we have found so far
+	
+	/**
+	 * Constructor for the Tree class
+	 * @param filename the filename of the input file
+	 */
 	public Tree(String filename) {
 		this.constraint = new Constraint(filename);
 		this.rootNode = new Node(null, -1, ' ');
 		this.finalSol = new ArrayList<>(); 
 	}
-
-	public static void main(String[] args) {
-		Tree tree = new Tree("data.txt");
-		currentLowerBound = tree.initSolution();
-		
-		if (currentLowerBound == -1) {
-			System.out.println("No solution.");
-		}
-		else {
-			search();
-			System.out.println(finalSol.toString());
-			System.out.println(currentLowerBound);
-
-		}
-			}
 	
 	/**
 	 * This class searches for the possible viable solution by finding 
@@ -47,29 +36,40 @@ public class Tree {
 			
 			// If there are no children for the tempNode, close the current
 			// node and move back to the parent node and find another child
-			// Else calculate the lower bounds of children node and set
-			// next node as child node with minimum lower bound
+			// Else, calculate the lower bounds of children node and set
+			// next node as the child node with minimum lower bound
 			if (tempNode.getChildren().size() == 0) {
 				tempNode.setOpen(false);
 				tempNode = tempNode.getParent();
-			
-				
-			} else {
+			} 
+			else {
 				for (Node childNode : tempNode.getChildren()) {
 					calcLowerBound(childNode);
 				}
+				
 				tempNode = minLowerBound(tempNode.getChildren());
 			}
 			
-			// When it reaches at the end node, exit loop
-			if (tempNode.getMachine() == 7) break;
-			if (tempNode.getMachine() == -1){
+			// When it reaches the end node (last level), exit loop
+			if (tempNode.getMachine() == 7) {
+				break;
+			}
+			
+			// If we haven't moved anywhere from the rootNode,
+			// then it means that we couldn't create children.
+			// Exit by returning -1.
+			if (tempNode.getMachine() == -1) {
 				return -1;
 			}
 		}
 
+		// close the parent node because we've already checked it
 		tempNode.getParent().setOpen(false);
+		
+		// Set the final solution to the history of the last node
 		finalSol = tempNode.getHistory();
+		
+		// return the lower bound of the last node
 		return tempNode.getLowerBound();
 		
 	}
@@ -158,15 +158,20 @@ public class Tree {
 	 * @return Node[index] Element of an array of children nodes with minimum lower bound
 	 */
  	public static Node minLowerBound(ArrayList<Node> children) {
-		
+ 		// set the min to the largest integer value possible for the first time
+ 		// so that it's guaranteed to have a different min later
 		int min = Integer.MAX_VALUE;
 		int index = -1;
+		
+		// Go through each child and see which child has the smallest lower bound
 		for (int i=0; i < children.size(); i++) {
 			if (children.get(i).getLowerBound() < min) {
 				min = children.get(i).getLowerBound();
 				index = i;
 			}
 		}
+		
+		// return the Node with the smallest lower bound
 		return children.get(index);
  	}
 	
@@ -218,13 +223,19 @@ public class Tree {
 						}
 					}
 				}
-				// if root node --> cannot check too near constraints
+				
+				// if we are at the rootNode, we need to check the following:
+				// 1. if any penalties fall into the forced/forbidden tasks
+				// Note that we cannot check for the two near penalties at the rootNode
 				if (parent.getMachine() == -1) {
 					for (int i = 0; i < availableTasks.length; i++) {
-						if (availableTasks[i] != Character.MIN_VALUE) { 
+						if (availableTasks[i] != Character.MIN_VALUE) {
+							// if the child that we are about to create passes the forced and forbidden
 							if (penalty[parentMachine + 1][convertInt(availableTasks[i])] != -1) {
-
+								// create a child
 								Node childNode = new Node(parent, parentMachine + 1, availableTasks[i]);
+								
+								// edit the historical path of this child
 								ArrayList<Character> childHistory = parent.getHistory();
 								childHistory.add(availableTasks[i]);
 								childNode.setHistory(childHistory);
@@ -234,16 +245,24 @@ public class Tree {
 					}
 				}
 				else if (parent.getMachine() == 6) {
+					// if we are at the end of the tree, we need to check the following:
+					// 1. if any penalties fall into the forced/forbidden tasks
+					// 2. if the two near constraints are passed for both (task_this, task_after) and (task_after, task_first)
 					for (int i = 0; i < availableTasks.length; i++) {
 						if (availableTasks[i] != Character.MIN_VALUE) { 
-							if (penalty[parentMachine + 1][convertInt(availableTasks[i])] != -1 //checking if penalty spot is null
+							if (penalty[parentMachine + 1][convertInt(availableTasks[i])] != -1
 							&& !constraint.tooNearH(parent.getTask(), availableTasks[i])
-							&& !constraint.tooNearH(availableTasks[i], parent.getHistory().get(0))) { 		//checking if there is too near hard constraint
-							
+							&& !constraint.tooNearH(availableTasks[i], parent.getHistory().get(0))) {
+								// create a child
 								Node childNode = new Node(parent, parentMachine + 1, availableTasks[i]);
-								int tnsPenalty = constraint.tooNearS(parent.getTask(), availableTasks[i]); //if there is too near soft constraint return penalty if not return 0
+								
+								// if there is two near soft constraint, return the penalty, if not, return 0
+								int tnsPenalty = constraint.tooNearS(parent.getTask(), availableTasks[i]);
+								// if there is two near soft constraint with the 1st level, add that soft constraint to the penalty
 								tnsPenalty = tnsPenalty + constraint.tooNearS(availableTasks[i], parent.getHistory().get(0));
 								childNode.setLowerBound(tnsPenalty);
+								
+								// edit the historical path of this child
 								ArrayList<Character> childHistory = parent.getHistory();
 								childHistory.add(availableTasks[i]);
 								childNode.setHistory(childHistory);
@@ -253,15 +272,21 @@ public class Tree {
 					}
 				}
 				else {
-					// initialize the children nodes; create nodes for only the available tasks
+					// if we are at any other nodes (other than root and the 6th level), we need to check the following:
+					// 1. if any penalties fall into the forced/forbidden tasks
+					// 2. if the two near constraints are passed for (task_this, task_after)
 					for (int i = 0; i < availableTasks.length; i++) {
 						if (availableTasks[i] != Character.MIN_VALUE) { 
-							if (penalty[parentMachine + 1][convertInt(availableTasks[i])] != -1 //checking if penalty spot is null
-							&& !constraint.tooNearH(parent.getTask(), availableTasks[i])) { 		//checking if there is too near hard constraint
-							
+							if (penalty[parentMachine + 1][convertInt(availableTasks[i])] != -1
+							&& !constraint.tooNearH(parent.getTask(), availableTasks[i])) {
+								// create a child
 								Node childNode = new Node(parent, parentMachine + 1, availableTasks[i]);
+								
+								// if there is two near soft constraint, return the penalty, if not, return 0
 								int tnsPenalty = constraint.tooNearS(parent.getTask(), availableTasks[i]); //if there is too near soft constraint return penalty if not return 0
 								childNode.setLowerBound(tnsPenalty);
+								
+								// edit the historical path of this child
 								ArrayList<Character> childHistory = parent.getHistory();
 								childHistory.add(availableTasks[i]);
 								childNode.setHistory(childHistory);
@@ -276,11 +301,39 @@ public class Tree {
 				parent.setHasChildren(true);
 	}
 
+	/**
+	 * Convert a task (in char) to an int value
+	 * @param task the character representing the task
+	 * @return int value that corresponds to the task
+	 */
 	public static int convertInt(char task){
 		return task - 65;
 	}
 
+	/**
+	 * Convert an int value to a task (in char)
+	 * @param task the integer representing the task
+	 * @return char that corresponds to the task
+	 */
 	public char convertChar(int task){
 		return (char) (task+65);
 	}
+	
+	/**
+	 * Main method
+	 */
+	public static void main(String[] args) {
+		Tree tree = new Tree("data.txt");
+		currentLowerBound = tree.initSolution();
+		
+		if (currentLowerBound == -1) {
+			System.out.println("No solution.");
+		}
+		else {
+			search();
+			System.out.println(finalSol.toString());
+			System.out.println(currentLowerBound);
+
+		}
+			}
 }
