@@ -84,12 +84,12 @@ public class Constraint {
     //(maybe in init solution and search?)
     // tooNearTask neads to be 2d array with true if there is too near else false
     public boolean tooNearH(char pTask, char cTask){
-        return tooNearTask[pTask][cTask];
+        return tooNearTask[pTask -65][cTask -65];
     }
  	
     // tooNearPenalties need to be 2d array with penalty value if exist, else 0
     public int tooNearS(char pTask, char cTask) {
-    	return tooNearPenalties[pTask][cTask];
+    	return tooNearPenalties[pTask -65][cTask -65];
     }
     
     public int[][] getPenalties() {

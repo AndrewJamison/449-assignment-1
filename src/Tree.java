@@ -16,6 +16,8 @@ public class Tree {
 		Tree tree = new Tree();
 		currentLowerBound = tree.initSolution();
 		search();
+		System.out.println(finalSol.toString());
+		System.out.println(currentLowerBound);
 	}
 	
 	/**
@@ -61,83 +63,76 @@ public class Tree {
 		return tempNode.getLowerBound();
 	}
 	
-	//check if open
-	// 	if closed go to parent
-	// create children --> check if has children already
+	/**
+	 * The search() function searches for the combination of tasks that has the lowest sum of the penalties.
+	 * @author Esther Kim, Esther Chung
+	 */
 	public static void search() {
+		// Now get the initial list of tasks that are worthwhile to go down;
+		// these are the ones that have smaller LB than the current LB.
 		ArrayList<Node> openChildrenNodes = new ArrayList<Node>();
 		for (Node childNode : rootNode.getChildren()) {
 			if ((childNode.getLowerBound() < currentLowerBound) && childNode.getOpen()) {
 				openChildrenNodes.add(childNode);
 			}
+			else {
+				childNode.setOpen(false);
+			}
 		}
+		
+		// Now traverse around the tree
+		// start off with the node that has the lowest LB
+		// out of the list of the nodes that are worthwhile to go down.
 		Node tempNode;
 		Node minChild;
-		while (openChildrenNodes.size() != 0) {
+		while (!openChildrenNodes.isEmpty()) {
 			tempNode = minLowerBound(openChildrenNodes);
-			// create children for node
+			// create children for the current node (tempNode)
+			// first check if tempNode already has the children created
 			if (!tempNode.getHasChildren()) {
+				// if there is no children, then create children 
 				createChildren(tempNode);
 				for (Node childNode : tempNode.getChildren()) {
 					calcLowerBound(childNode);
 				}
+				
 			}
-			// when at the end of tree 
-			if (tempNode.getMachine() == 6) {
+		
+			if (tempNode.getMachine() == 6 && !tempNode.getChildren().isEmpty()) {
 				minChild = minLowerBound(tempNode.getChildren());
+				
 				if (currentLowerBound > minChild.getLowerBound()) {
 					currentLowerBound = minChild.getLowerBound();
 					finalSol = minChild.getHistory();
 				}
-				tempNode.setOpen(false);
-				openChildrenNodes.remove(openChildrenNodes.indexOf(tempNode));
-				for (Node childNode : tempNode.getChildren()) {
-					if (currentLowerBound < childNode.getLowerBound()) {
-						openChildrenNodes.remove(openChildrenNodes.indexOf(childNode));	
-					}
-				}
+				
 			}
-			// when at middle of tree
 			else {
+				
+				// if there are children that are available,
+				// add these nodes to the openChildrenNodes array if they have
+				// lower bounds that are smaller than the currentLowerBound.
 				for (Node childNode : tempNode.getChildren()) {
-					if (currentLowerBound > childNode.getLowerBound()) {
-						openChildrenNodes.add(childNode);	
-					}
-					else {
-						childNode.setOpen(false);
+					if ((childNode.getLowerBound() < currentLowerBound) && childNode.getOpen()) {
+						openChildrenNodes.add(childNode);
+						System.out.println(childNode.getMachine());
 					}
 				}
+				
+				// if we are at the last node, select the child node that has the
+				// smallest lower bound. Compare that lower bound with the current
+				// lower bound. If it is smaller than the current lower bound, 
+				// update the current lower bound, and update the final solution.
+		
+				
+				// remove the current tempNode and move to the best node
+				
 			}
-			
-			
-			
-			//Check if node has children, if not, generate them and calc LB
-			//if current node is node 6, then find best child, find LB for each child
-			//update CLB if possible, and close and remove all nodes in openChildrenNodes 
-			//with LB > CLB
-			//close parent
-			
-			//else:
-			//add all new children with LB < CLB to openChildrenNode
-			
-			
+			tempNode.setOpen(false);
+			openChildrenNodes.remove(openChildrenNodes.indexOf(tempNode));
 		}
 	}
-	
-	/* 	
-	 * Node[] openChildrenNodes;
-	 * 
-	 * 		if less than curentLB
-	 * 			check if have children
-	 * 				if no children --> create children
-	 * 					store all children in openChildrenNodes
-	 * 					
-	 * 				else has children 
-	 * 					check if child is closed
-	 * 					store all open children in openChildrenNodes 
-	 * 		else greater than currentLB
-	 * 			close the node 
-	 */
+
 
 	/**
 	 * Class minLowerBound returns the child node with minimum lower bound
@@ -187,34 +182,81 @@ public class Tree {
 	 * @param parent the parent Node from which the children come
 	 */
 	public static void createChildren(Node parent) {
-		// create an array of nodes
-		ArrayList<Node> childrenArray = new ArrayList<>();
-		
-		// variables needed
-		int parentMachine = parent.getMachine(); // get the parent's machine #
-		char[] availableTasks = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'}; // the available tasks
-		ArrayList<Character> takenTasks = parent.getHistory();  // get the history of the tasks that have been taken so far
-		
-		// Take out the tasks that are already taken from the availableTasks array
-		for (int i = 0; i < parentMachine; i++) {
-			for (int j = 0; j < availableTasks.length; j++) {
-				if (takenTasks.get(i) == availableTasks[j]) {
-					availableTasks[j] = Character.MIN_VALUE ;
-					break; 
+		// getting penalty array from constraint class
+				int[][] penalty = constraint.getPenalties();
+				// create an array of nodes
+				ArrayList<Node> childrenArray = new ArrayList<Node>();
+				
+				// variables needed
+				int parentMachine = parent.getMachine(); // get the parent's machine #
+				char[] availableTasks = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'}; // the available tasks
+				ArrayList<Character> takenTasks = parent.getHistory();  // get the history of the tasks that have been taken so far
+				
+				// Take out the tasks that are already taken from the availableTasks array
+				for (int i = 0; i < parentMachine; i++) {
+					for (int j = 0; j < availableTasks.length; j++) {
+						if (takenTasks.get(i) == availableTasks[j]) {
+							availableTasks[j] = Character.MIN_VALUE;
+							break; 
+						}
+					}
 				}
-			}
-		}
-		
-		// initialize the children nodes; create nodes for only the available tasks
-		for (int i = 0; i < availableTasks.length; i++) {
-			if (availableTasks[i] != Character.MIN_VALUE ) {
-				childrenArray.add(new Node(parent, parentMachine + 1, availableTasks[i]));
-			}
-		}
-		
-		// pass the children array to the parent node
-		parent.setChildren(childrenArray);
-		parent.setHasChildren(true);
+				// if root node --> cannot check too near constraints
+				if (parent.getMachine() == -1) {
+					for (int i = 0; i < availableTasks.length; i++) {
+						if (availableTasks[i] != Character.MIN_VALUE) { 
+							if (penalty[parentMachine + 1][convertInt(availableTasks[i])] != -1) {
+
+								Node childNode = new Node(parent, parentMachine + 1, availableTasks[i]);
+								ArrayList<Character> childHistory = parent.getHistory();
+								childHistory.add(availableTasks[i]);
+								childNode.setHistory(childHistory);
+								childrenArray.add(childNode);
+							}
+						}
+					}
+				}
+				else if (parent.getMachine() == 6) {
+					for (int i = 0; i < availableTasks.length; i++) {
+						if (availableTasks[i] != Character.MIN_VALUE) { 
+							if (penalty[parentMachine + 1][convertInt(availableTasks[i])] != -1 //checking if penalty spot is null
+							&& !constraint.tooNearH(parent.getTask(), availableTasks[i])
+							&& !constraint.tooNearH(availableTasks[i], parent.getHistory().get(0))) { 		//checking if there is too near hard constraint
+							
+								Node childNode = new Node(parent, parentMachine + 1, availableTasks[i]);
+								int tnsPenalty = constraint.tooNearS(parent.getTask(), availableTasks[i]); //if there is too near soft constraint return penalty if not return 0
+								tnsPenalty = tnsPenalty + constraint.tooNearS(availableTasks[i], parent.getHistory().get(0));
+								childNode.setLowerBound(tnsPenalty);
+								ArrayList<Character> childHistory = parent.getHistory();
+								childHistory.add(availableTasks[i]);
+								childNode.setHistory(childHistory);
+								childrenArray.add(childNode);
+							}
+						}
+					}
+				}
+				else {
+					// initialize the children nodes; create nodes for only the available tasks
+					for (int i = 0; i < availableTasks.length; i++) {
+						if (availableTasks[i] != Character.MIN_VALUE) { 
+							if (penalty[parentMachine + 1][convertInt(availableTasks[i])] != -1 //checking if penalty spot is null
+							&& !constraint.tooNearH(parent.getTask(), availableTasks[i])) { 		//checking if there is too near hard constraint
+							
+								Node childNode = new Node(parent, parentMachine + 1, availableTasks[i]);
+								int tnsPenalty = constraint.tooNearS(parent.getTask(), availableTasks[i]); //if there is too near soft constraint return penalty if not return 0
+								childNode.setLowerBound(tnsPenalty);
+								ArrayList<Character> childHistory = parent.getHistory();
+								childHistory.add(availableTasks[i]);
+								childNode.setHistory(childHistory);
+								childrenArray.add(childNode);
+							}
+						}
+					}
+				}
+				
+				// pass the children array to the parent node
+				parent.setChildren(childrenArray);
+				parent.setHasChildren(true);
 	}
 
 	public static int convertInt(char task){
