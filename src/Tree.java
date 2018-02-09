@@ -17,7 +17,7 @@ public class Tree {
 
 	public static void main(String[] args) {
 		String sol;
-		Tree tree = new Tree("data.txt");
+		Tree tree = new Tree(args[0]);
 		currentLowerBound = tree.initSolution();
 		if (currentLowerBound == -1) {
 			sol = "No valid solution possible!";
