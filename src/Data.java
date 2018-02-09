@@ -25,7 +25,7 @@ public class Data {
 	public Data(String filename) {
 		Scanner sc = null;
 		
-		try {
+		
 			String eol = System.getProperty("line.separator");
 			sc = new Scanner(new FileInputStream(filename));
 			sc.useDelimiter(eol);
@@ -55,7 +55,7 @@ public class Data {
 							}
 							else if (temp[i].length() != 6) {
 								sc.close();
-								throw new IOException("Invalid forced partial assignment data.");
+								throw new IOException("partial assignment error");
 							}
 							else if (temp[i].charAt(0) == '(' && temp[i].charAt(5) == ')' && temp[i].charAt(2) == ',' && temp[i].charAt(3) == ' ') {
 								int machine = Character.getNumericValue((temp[i].charAt(1)));
@@ -68,13 +68,13 @@ public class Data {
 								}
 								else {
 									sc.close();
-									throw new IOException("Invalid Forced Partial Assignment Data.");
+									throw new IOException("partial assignment error");
 								}
 							}
 							
 							else {
 								sc.close();
-								throw new IOException("Invalid characters in forced partial assignment data.");
+								throw new IOException("invalid machine/task");
 							}
 							i++;
 						}
@@ -96,7 +96,7 @@ public class Data {
 								}
 								else if (temp2[i].length() != 6) {
 									sc.close();
-									throw new IOException("invalid forbidden machine data");
+									throw new IOException("invalid machine/task");
 								}
 								else if (temp2[i].charAt(0) == '(' && temp2[i].charAt(5) == ')' && temp2[i].charAt(2) == ',' && temp2[i].charAt(3) == ' ') {
 									int machine = Character.getNumericValue((temp2[i].charAt(1)));
@@ -110,19 +110,19 @@ public class Data {
 												}
 												else {
 													sc.close();
-													throw new IOException("Conflicting forced and forbidden machines");
+													throw new IOException("No valid solution possible!");
 												}
 												
 											}
 											else {
 												sc.close();
-												throw new IOException("Invalid Forced Partial Assignment Data.");
+												throw new IOException("invalid machine/task");
 											}
 								}
 								
 								else {
 									sc.close();
-									throw new IOException("Invalid characters in forced partial assignment data.");
+									throw new IOException("invalid machine/task");
 								}
 								i++;
 							}
@@ -143,7 +143,7 @@ public class Data {
 									
 									else if (temp3[i].length() != 6){
 										sc.close();
-										throw new IOException("Invalid too-near task data");
+										throw new IOException("invalid machine/task");
 									}
 									else if (temp3[i].charAt(0) == '(' && temp3[i].charAt(5) == ')' && temp3[i].charAt(2) == ',' && temp3[i].charAt(3) == ' ') {
 										int task1 = temp3[i].charAt(1) - 65;
@@ -154,14 +154,14 @@ public class Data {
 										}
 										else {
 											sc.close();
-											throw new IOException("Invalid too-near task data");
+											throw new IOException("Invalid machine/task");
 											
 										}
 										
 									}
 									else {
 										sc.close();
-										throw new IOException("Invalid too-near task data");
+										throw new IOException("invalid machine/task");
 									}
 									i++;
 									}
@@ -170,7 +170,7 @@ public class Data {
 								
 							else {
 								sc.close();
-								throw new IOException("Missing too-near tasks header");
+								throw new IOException("Error while parsing input file");
 							}
 							
 							
@@ -198,7 +198,7 @@ public class Data {
 											}
 											catch (NumberFormatException e){
 												sc.close();
-												throw new IOException("invalid machine penalty data.");
+												throw new IOException("machine penalty error");
 												
 											}
 											
@@ -207,7 +207,7 @@ public class Data {
 									}
 									else {
 										sc.close();
-										throw new IOException("invalid machine penalty data.");
+										throw new IOException("machine penalty error");
 									}
 									i ++;
 								}
@@ -233,14 +233,14 @@ public class Data {
 										}
 										catch (NumberFormatException e) {
 											sc.close();
-											throw new IOException("Invalid soft too near task data.");
+											throw new IOException("invalid penalty");
 										}
 										if (task1 >= 0 && task1 < 8 && task2 >= 0 & task2 < 8) {
 											tooNearTasksSoft[task1][task2] = penalty;
 										}
 										else {
 											sc.close();
-											throw new IOException("invalid soft too near task data.");
+											throw new IOException("invalid penalty");
 										}
 										
 									}
@@ -255,7 +255,7 @@ public class Data {
 							}
 							else {
 								sc.close();
-								throw new IOException("Missing too-near penalties header");
+								throw new IOException("Error while parsing input file");
 							}
 						
 							
@@ -263,7 +263,7 @@ public class Data {
 						}
 						else {
 							sc.close();
-							throw new IOException("Missing forbidden Machine header.");
+							throw new IOException("Error while parsing input file");
 						}
 						
 						
@@ -274,25 +274,22 @@ public class Data {
 					}
 					else {
 						sc.close();
-						throw new IOException("Missing forced partial assignment header.");
+						throw new IOException("Error while parsing input file");
 					}
 					}
 				else {
 					sc.close();
-					throw new IOException("Missing name.");
+					throw new IOException("Error while parsing input file");
 					}
 				}
 				else {
 					sc.close();
-					throw new IOException("Missing \"name\" header.");
+					throw new IOException("Error while parsing input file");
 				}
 
 		
-		}
-		catch (IOException e) {
-			e.printStackTrace();
-			sc.close();
-		}
+		
+		
 		
 		sc.close();
 		
