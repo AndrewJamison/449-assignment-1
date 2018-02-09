@@ -1,3 +1,6 @@
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class Tree {
@@ -18,6 +21,21 @@ public class Tree {
 		search();
 		System.out.println(finalSol.toString());
 		System.out.println(currentLowerBound);
+		
+		try {
+			String sol = "Solution";
+			for (char task: finalSol) {
+				sol = sol + " " + task;
+			}
+			sol = sol + "; Quality: " + Integer.toString(currentLowerBound);
+			
+			BufferedWriter writer = new BufferedWriter(new FileWriter(args[1]));
+			writer.write(sol);
+			
+			writer.close();
+		} catch (IOException ex) {
+			System.err.println("Error writing file");
+		}
 	}
 	
 	/**
