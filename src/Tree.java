@@ -15,10 +15,17 @@ public class Tree {
 	public static void main(String[] args) {
 		Tree tree = new Tree("data.txt");
 		currentLowerBound = tree.initSolution();
-		search();
-		System.out.println(finalSol.toString());
-		System.out.println(currentLowerBound);
-	}
+		
+		if (currentLowerBound == -1) {
+			System.out.println("No solution.");
+		}
+		else {
+			search();
+			System.out.println(finalSol.toString());
+			System.out.println(currentLowerBound);
+
+		}
+			}
 	
 	/**
 	 * This class searches for the possible viable solution by finding 
@@ -35,7 +42,6 @@ public class Tree {
 		
 		// Branching down to the leaf node
 		while (true) {
-			
 			// Create children of tempNode
 			createChildren(tempNode);
 			
@@ -46,6 +52,8 @@ public class Tree {
 			if (tempNode.getChildren().size() == 0) {
 				tempNode.setOpen(false);
 				tempNode = tempNode.getParent();
+			
+				
 			} else {
 				for (Node childNode : tempNode.getChildren()) {
 					calcLowerBound(childNode);
@@ -55,13 +63,15 @@ public class Tree {
 			
 			// When it reaches at the end node, exit loop
 			if (tempNode.getMachine() == 7) break;
-			
+			if (tempNode.getMachine() == -1){
+				return -1;
+			}
 		}
 
 		tempNode.getParent().setOpen(false);
 		finalSol = tempNode.getHistory();
-		
 		return tempNode.getLowerBound();
+		
 	}
 	
 	/**
@@ -116,7 +126,7 @@ public class Tree {
 				for (Node childNode : tempNode.getChildren()) {
 					if ((childNode.getLowerBound() < currentLowerBound) && childNode.getOpen()) {
 						openChildrenNodes.add(childNode);
-						System.out.println(childNode.getMachine());
+						//System.out.println(childNode.getMachine());
 					}
 				}
 				
