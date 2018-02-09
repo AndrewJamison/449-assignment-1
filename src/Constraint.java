@@ -2,14 +2,14 @@ import java.util.ArrayList;
 
 public class Constraint {
 	
-    private ArrayList<char[]> forced;
-    private ArrayList<char[]> forbidden; 
+    private ArrayList<char[]> forced; //array list that contains all the forced assignments
+    private ArrayList<char[]> forbidden; //array list that contains all the forbidden assignments
 
-    private int[][] penalties;
-    private int[][] tooNearPenalties;
-    private boolean[][] tooNearTask;
+    private int[][] penalties; //2D array that contains all penalty values
+    private int[][] tooNearPenalties; //2D array that contains penalties for tooNear soft constraints
+    private boolean[][] tooNearTask; //2D array that contains boolean values for whether or not a tooNearTask constraint exists
         
-    private Data data;
+    private Data data;	//data object created to receive all input
     
     public Constraint(String filename) {
     	
