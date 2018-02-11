@@ -1,1 +1,1 @@
-No valid solution possible!
+machine penalty error

@@ -341,7 +341,15 @@ public class Tree {
 		
 		Tree tree = new Tree(args[0]);
 		if (tree.errors) {
-			System.out.println(errormessage);
+			
+			try {	
+				BufferedWriter writer = new BufferedWriter(new FileWriter(args[1]));
+				writer.write(errormessage);
+					
+				writer.close();
+			} catch (IOException e) {
+				System.err.println("Error writing file");
+			}
 		}
 		else {
 			currentLowerBound = tree.initSolution();
