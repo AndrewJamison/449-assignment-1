@@ -63,14 +63,14 @@ public class Data {
 								i++;
 								continue;
 							}
-							else if (temp[i].trim().length() != 6) { //if the length of the line isn't 6 then its obviously incorrect data.
+							else if (temp[i].trim().length() != 5) { //if the length of the line isn't 6 then its obviously incorrect data.
 								sc.close();
 								throw new IOException("Error while parsing input file");
 							}
 							//make sure the data has the right format. I dont know how regex works obviously
-							else if (temp[i].charAt(0) == '(' && temp[i].charAt(5) == ')' && temp[i].charAt(2) == ',' && temp[i].charAt(3) == ' ') {
+							else if (temp[i].charAt(0) == '(' && temp[i].charAt(4) == ')' && temp[i].charAt(2) == ',') {
 								int machine = Character.getNumericValue((temp[i].charAt(1))); //read in the machine number
-								int task = temp[i].charAt(4) - 65; //read in task letter and convert to int
+								int task = temp[i].charAt(3) - 65; //read in task letter and convert to int
 //								System.out.println(machine);
 //								System.out.println(task);
 								
@@ -107,14 +107,14 @@ public class Data {
 									i++;
 									continue;
 								}	//if line length isnt 6 then it is incorrect data
-								else if (temp2[i].trim().length() != 6) {
+								else if (temp2[i].trim().length() != 5) {
 									sc.close();
 									throw new IOException("Error while parsing input file");
 								}
 								//make sure the data is the correct format
-								else if (temp2[i].charAt(0) == '(' && temp2[i].charAt(5) == ')' && temp2[i].charAt(2) == ',' && temp2[i].charAt(3) == ' ') {
+								else if (temp2[i].charAt(0) == '(' && temp2[i].charAt(4) == ')' && temp2[i].charAt(2) == ',') {
 									int machine = Character.getNumericValue((temp2[i].charAt(1)));
-									int task = temp2[i].charAt(4) - 65;
+									int task = temp2[i].charAt(3) - 65;
 //									System.out.println(machine);
 //									System.out.println(task);
 											if (machine <= 8 && machine > 0 && task < 8 && task >= 0) {
@@ -159,14 +159,14 @@ public class Data {
 										continue;
 									}
 									
-									else if (temp3[i].trim().length() != 6){ //if input length is wrong then throw exception
+									else if (temp3[i].trim().length() != 5){ //if input length is wrong then throw exception
 										sc.close();
 										throw new IOException("Error while parsing input file");
 									}
 									//make sure data is of correct format
-									else if (temp3[i].charAt(0) == '(' && temp3[i].charAt(5) == ')' && temp3[i].charAt(2) == ',' && temp3[i].charAt(3) == ' ') {
+									else if (temp3[i].charAt(0) == '(' && temp3[i].charAt(3) == ')' && temp3[i].charAt(2) == ',') {
 										int task1 = temp3[i].charAt(1) - 65;
-										int task2 = temp3[i].charAt(4) - 65;
+										int task2 = temp3[i].charAt(3) - 65;
 										//make sure tasks are valid numbers
 										if (task1 < 8 && task1 >= 0 && task2 < 8 && task2 >= 0) {
 											tooNearTasks[task1][task2] = true;
@@ -245,13 +245,13 @@ public class Data {
 									if (temp5.trim().equals("") || temp5.trim().equals(eol)) {
 										continue;
 									}//make sure the data is the correct format
-									else if (temp5.charAt(0) == '(' && temp5.charAt(2) == ',' && temp5.charAt(temp5.length() - 1) == ')' && temp5.charAt(5) == ',' && temp5.charAt(6) == ' '){
+									else if (temp5.charAt(0) == '(' && temp5.charAt(2) == ',' && temp5.charAt(temp5.length() - 1) == ')' && temp5.charAt(4) == ','){
 										int task1 = temp5.charAt(1) - 65;
-										int task2 = temp5.charAt(4) - 65;
+										int task2 = temp5.charAt(3) - 65;
 										int penalty = 0;
 										try {
 											
-											penalty = Integer.parseInt(temp5.substring(7,temp5.length() - 1)); //read in the penalty and try to convert to int
+											penalty = Integer.parseInt(temp5.substring(5,temp5.length() - 1)); //read in the penalty and try to convert to int
 										}
 										catch (NumberFormatException e) { //throw an exception if it cant be converted.
 											sc.close();
