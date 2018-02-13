@@ -164,7 +164,7 @@ public class Data {
 										throw new IOException("Error while parsing input file");
 									}
 									//make sure data is of correct format
-									else if (temp3[i].charAt(0) == '(' && temp3[i].charAt(3) == ')' && temp3[i].charAt(2) == ',') {
+									else if (temp3[i].charAt(0) == '(' && temp3[i].charAt(4) == ')' && temp3[i].charAt(2) == ',') {
 										int task1 = temp3[i].charAt(1) - 65;
 										int task2 = temp3[i].charAt(3) - 65;
 										//make sure tasks are valid numbers
