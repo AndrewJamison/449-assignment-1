@@ -226,7 +226,7 @@ public class Data {
 											}
 											catch (NumberFormatException e){ //if they cant be converted to int throw an exception
 												sc.close();
-												throw new IOException("machine penalty error");
+												throw new IOException("invalid penalty");
 												
 											}
 											
@@ -268,7 +268,7 @@ public class Data {
 										}
 										else {//invalid data
 											sc.close();
-											throw new IOException("invalid penalty");
+											throw new IOException("invalid task");
 										}
 										
 									}
