@@ -200,7 +200,7 @@ public class Data {
 							//make sure next header is correct
 							if (sc.nextLine().equalsIgnoreCase("machine penalties:")) {
 								//read data until next header
-								sc.useDelimiter("too-near penalties:");
+								sc.useDelimiter("too-near penalities");
 								String temp4[] = sc.next().split(eol);
 								i = 0;
 								int row = 0;
@@ -239,7 +239,7 @@ public class Data {
 							while (sc.hasNext("")) {
 								sc.nextLine();
 							}//make sure the next header is correct
-							if (sc.nextLine().equalsIgnoreCase("too-near penalties:")) {
+							if (sc.nextLine().equalsIgnoreCase("too-near penalities")) {
 								while (sc.hasNextLine()) {
 									String temp5 = sc.nextLine();
 									if (temp5.trim().equals("") || temp5.trim().equals(eol)) {
