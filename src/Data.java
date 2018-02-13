@@ -80,8 +80,14 @@ public class Data {
 									forcedPartialAssignment[1][machine -1] = task;
 								}
 								else {
-									sc.close();
-									throw new IOException("partial assignment error");
+									if (machine > 8 || machine <= 0) {
+										sc.close();
+										throw new IOException("invalid machine/task");
+									}
+									else {
+										sc.close();
+										throw new IOException("partial assignment error");
+									}
 								}
 							}
 							
