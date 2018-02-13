@@ -211,6 +211,11 @@ public class Data {
 								i = 0;
 								int row = 0;
 								String machinePenaltyString[][] = new String[8][8];
+								
+								if (temp4.length != 8) {
+									throw new IOException("machine penalty error");
+								}
+								
 								while (i < temp4.length) {
 									if (temp4[i].trim().equals("") || temp4[i].trim().equals(eol)) { //skip any empty lines
 										i++;
