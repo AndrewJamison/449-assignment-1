@@ -56,11 +56,31 @@ public class Tree {
 				tempNode = tempNode.getParent();
 			} 
 			else {
+				// Even if there are children, we still need to check
+				// whether all the children are closed or not
+				int numClosedChildren = 0;
+				
 				for (Node childNode : tempNode.getChildren()) {
-					calcLowerBound(childNode);
+					// calculate the lower bound for just the ones
+					// that are open
+					if (childNode.getOpen()) {
+						calcLowerBound(childNode);
+					}
+					else {
+						numClosedChildren = numClosedChildren + 1;
+					}
 				}
 				
-				tempNode = minLowerBound(tempNode.getChildren());
+				if (numClosedChildren == tempNode.getChildren().size()) {
+					// all children nodes are closed, so close this node and go to the parent node
+					tempNode.setOpen(false);
+					tempNode = tempNode.getParent();
+				}
+				else {
+					// if there are still open children to be considered, set the tempNode to the node that
+					// has the minimum lower bound
+					tempNode = minLowerBound(tempNode.getChildren());
+				}
 			}
 			
 			// When it reaches the end node (last level), exit loop
@@ -176,9 +196,10 @@ public class Tree {
 		int min = Integer.MAX_VALUE;
 		int index = -1;
 		
-		// Go through each child and see which child has the smallest lower bound
+		// Go through each child and see which child has the smallest lower bound;
+		// Compare only the open children
 		for (int i=0; i < children.size(); i++) {
-			if (children.get(i).getLowerBound() < min) {
+			if (children.get(i).getLowerBound() < min && children.get(i).getOpen()) {
 				min = children.get(i).getLowerBound();
 				index = i;
 			}
@@ -217,7 +238,9 @@ public class Tree {
 	 * @param parent the parent Node from which the children come
 	 */
 	public static void createChildren(Node parent) {
-		// getting penalty array from constraint class
+		// Create children only if there is no children
+		if (!parent.getHasChildren()) {
+		        // getting penalty array from constraint class
 				int[][] penalty = constraint.getPenalties();
 				// create an array of nodes
 				ArrayList<Node> childrenArray = new ArrayList<Node>();
@@ -312,6 +335,7 @@ public class Tree {
 				// pass the children array to the parent node
 				parent.setChildren(childrenArray);
 				parent.setHasChildren(true);
+		}
 	}
 
 	/**
