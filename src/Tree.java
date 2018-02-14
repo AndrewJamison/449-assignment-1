@@ -2,15 +2,18 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 
 public class Tree {
 
-	static Constraint constraint; // the Constraint object that has all the constraints
-	static Node rootNode; // the rootNode of the tree; so that we can keep track of the other nodes
-	static ArrayList<Character> finalSol; // the path to the final solution that we have found so far
-	static int currentLowerBound; // the lower bound of the final solution that we have found so far
-	static boolean errors;
-	static String errormessage;
+	private Constraint constraint; // the Constraint object that has all the constraints
+	private Node rootNode; // the rootNode of the tree; so that we can keep track of the other nodes
+	private ArrayList<Character> finalSol; // the path to the final solution that we have found so far
+	private int currentLowerBound; // the lower bound of the final solution that we have found so far
+	private boolean errors;
+	private String errormessage;
 	
 	/**
 	 * Constructor for the Tree class
@@ -25,6 +28,17 @@ public class Tree {
 		}
 		this.rootNode = new Node(null, -1, ' ');
 		this.finalSol = new ArrayList<>(); 
+	}
+	
+	public Tree(String filename, ArrayList<Character> finalSol, int currentLowerBound) {
+		this.constraint = new Constraint(filename);
+		if (this.constraint.errors) {
+			errors = this.constraint.errors;
+			errormessage = this.constraint.errormessage;
+		}
+		this.rootNode = new Node(null, -1, ' ');
+		this.finalSol = finalSol;
+		this.currentLowerBound = currentLowerBound;
 	}
 
 	
@@ -111,11 +125,18 @@ public class Tree {
 	 * The search() function searches for the combination of tasks that has the lowest sum of the penalties.
 	 * @author Esther Kim, Esther Chung
 	 */
-	public static void search() {
+	public void search() {
 		// Now get the initial list of tasks that are worthwhile to go down;
 		// these are the ones that have smaller LB than the current LB.
 		ArrayList<Node> openChildrenNodes = new ArrayList<Node>();
+		
+		// create children for the rootNode
+		// Initial node = root node
+		createChildren(rootNode);
+		
 		for (Node childNode : rootNode.getChildren()) {
+			calcLowerBound(childNode);
+			
 			if ((childNode.getLowerBound() < currentLowerBound) && childNode.getOpen()) {
 				openChildrenNodes.add(childNode);
 			}
@@ -190,7 +211,7 @@ public class Tree {
 	 * @param children An array of children nodes with same parent
 	 * @return Node[index] Element of an array of children nodes with minimum lower bound
 	 */
- 	public static Node minLowerBound(ArrayList<Node> children) {
+ 	public Node minLowerBound(ArrayList<Node> children) {
  		// set the min to the largest integer value possible for the first time
  		// so that it's guaranteed to have a different min later
 		int min = Integer.MAX_VALUE;
@@ -213,23 +234,16 @@ public class Tree {
  	 * This method calculates the total lower bound for every node up to and including the current node and sets the passes in nodes lower bound to the sum
  	 * @param node the node to calculate the lower bound for 
  	 */
-	public static void calcLowerBound(Node node) {
-		Node calcNode = node; //the node whose LB is being calculated
+	public void calcLowerBound(Node node) {
 		int[][] penalty = constraint.getPenalties(); //uses 2D penalty array from the constraint class
-		ArrayList<Character> history = calcNode.getHistory(); //list of the tasks assigned prior to this current node and including this current nodes task
-		int lowerbound = calcNode.getLowerBound(); //initialize lowerbound to current nodes set lowerbound (zero or if there is a soft constraint it would take that penalty to start)
+		int lowerbound = node.getLowerBound(); //initialize lowerbound to current nodes set lowerbound (zero or if there is a soft constraint it would take that penalty to start)
 		
-		//calculate the sum of the penalties for the tasks assigned in the given history ArrayList
-		char tempTask;
-		int tempMachine;
-		for (int i = 0; i < history.size(); i++) {
-			tempMachine = i;
-			tempTask = history.get(i);
-			lowerbound += penalty[tempMachine][convertInt(tempTask)];
+		if (node.getMachine() != -1) {
+			lowerbound += penalty[node.getMachine()][convertInt(node.getTask())];
 		}
 		
 		//set the lowerbound of the node
-		calcNode.setLowerBound(lowerbound);
+		node.setLowerBound(lowerbound);
 	}
 	
 	/**
@@ -237,7 +251,7 @@ public class Tree {
 	 * @author Esther Chung
 	 * @param parent the parent Node from which the children come
 	 */
-	public static void createChildren(Node parent) {
+	public void createChildren(Node parent) {
 		// Create children only if there is no children
 		if (!parent.getHasChildren()) {
 		        // getting penalty array from constraint class
@@ -293,7 +307,8 @@ public class Tree {
 								Node childNode = new Node(parent, parentMachine + 1, availableTasks[i]);
 								
 								// if there is two near soft constraint, return the penalty, if not, return 0
-								int tnsPenalty = constraint.tooNearS(parent.getTask(), availableTasks[i]);
+								int tnsPenalty = parent.getLowerBound() + constraint.tooNearS(parent.getTask(), availableTasks[i]);
+								
 								// if there is two near soft constraint with the 1st level, add that soft constraint to the penalty
 								tnsPenalty = tnsPenalty + constraint.tooNearS(availableTasks[i], parent.getHistory().get(0));
 								childNode.setLowerBound(tnsPenalty);
@@ -319,7 +334,7 @@ public class Tree {
 								Node childNode = new Node(parent, parentMachine + 1, availableTasks[i]);
 								
 								// if there is two near soft constraint, return the penalty, if not, return 0
-								int tnsPenalty = constraint.tooNearS(parent.getTask(), availableTasks[i]); //if there is too near soft constraint return penalty if not return 0
+								int tnsPenalty = parent.getLowerBound() + constraint.tooNearS(parent.getTask(), availableTasks[i]); //if there is too near soft constraint return penalty if not return 0
 								childNode.setLowerBound(tnsPenalty);
 								
 								// edit the historical path of this child
@@ -337,6 +352,34 @@ public class Tree {
 				parent.setHasChildren(true);
 		}
 	}
+	
+	public Constraint getConstraint() {
+		return this.constraint;
+	}
+	
+	public Node getRootNode() {
+		return this.rootNode;
+	}
+	
+	public ArrayList<Character> getFinalSol() {
+		return this.finalSol;
+	}
+	
+	public int getCurrentLowerBound() {
+		return this.currentLowerBound;
+	}
+	
+	public boolean getErrors() {
+		return this.errors;
+	}
+	
+	public String getErrorMessage() {
+		return this.errormessage;
+	}
+	
+	public void setCurrentLowerBound(int currentLowerBound) {
+		this.currentLowerBound = currentLowerBound;
+	}
 
 	/**
 	 * Convert a task (in char) to an int value
@@ -352,7 +395,7 @@ public class Tree {
 	 * @param task the integer representing the task
 	 * @return char that corresponds to the task
 	 */
-	public char convertChar(int task){
+	public static char convertChar(int task){
 		return (char) (task+65);
 	}
 	
@@ -364,11 +407,11 @@ public class Tree {
 		String sol;
 		
 		Tree tree = new Tree(args[0]);
-		if (tree.errors) {
+		if (tree.getErrors()) {
 			
 			try {	
 				BufferedWriter writer = new BufferedWriter(new FileWriter(args[1]));
-				writer.write(errormessage);
+				writer.write(tree.getErrorMessage());
 					
 				writer.close();
 			} catch (IOException e) {
@@ -376,20 +419,23 @@ public class Tree {
 			}
 		}
 		else {
-			currentLowerBound = tree.initSolution();
-			if (currentLowerBound == -1) {
+			tree.setCurrentLowerBound(tree.initSolution());
+			if (tree.getCurrentLowerBound() == -1) {
 				sol = "No valid solution possible!";
 			}
 			else {
-				search();
-				System.out.println(finalSol.toString());
-				System.out.println(currentLowerBound);
+				// set all the nodes to be open so that we don't skip them
+				tree = new Tree(args[0], tree.getFinalSol(), tree.getCurrentLowerBound());
+				
+				tree.search();
+				System.out.println(tree.getFinalSol().toString());
+				System.out.println(tree.getCurrentLowerBound());
 				
 				sol = "Solution";
-				for (char task: finalSol) {
+				for (char task: tree.getFinalSol()) {
 					sol = sol + " " + task;
 				}
-				sol = sol + "; Quality: " + Integer.toString(currentLowerBound);
+				sol = sol + "; Quality: " + Integer.toString(tree.getCurrentLowerBound());
 			}	
 			try {	
 				BufferedWriter writer = new BufferedWriter(new FileWriter(args[1]));
